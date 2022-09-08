@@ -27,18 +27,6 @@ class Game {
     
     var tiles: [[TileModel?]]
     
-    lazy var testingTiles: [[TileModel?]] = {
-        let tileNumbers = satisfyingTiles
-        var tileModels: [[TileModel?]] = Array(repeating: Array(repeating: nil, count: numberOfColumns), count: numberOfRows)
-        for i in tileNumbers.indices {
-            for j in tileNumbers[i].indices {
-                let tile = TileModel(power: tileNumbers[i][j], position: (i, j))
-                tileModels[i][j] = tile
-            }
-        }
-        return tileModels
-    }()
-    
     private var emptyPositions: [Position] {
         var result: [Position] = []
         for i in tiles.indices {
@@ -50,42 +38,12 @@ class Game {
         }
         return result
     }
-    
-    private let satisfyingTiles = [
-        [16,15,14,13],
-        [9,10,11,12],
-        [8,7,6,5],
-        [2,2,3,4]
-    ]
-    
-    private lazy var allSameTiles = Array(repeating: Array(repeating: 1, count: numberOfColumns), count: numberOfRows)
-    
-    private lazy var testCase = [
-        [nil, nil, 1, nil],
-        [nil, nil, 1, nil],
-        [nil, nil, 3, nil],
-        [nil, nil, nil, nil]
-    ]
-    
-    private let testTiles = [
-        [nil, 1, 1, 2],
-        [nil, 3, nil, nil],
-        [nil, 3, nil, nil],
-        [2, 3, nil, 2]
-    ]
-    
-    private lazy var oneTileBoard = [
-        Array(repeating: nil, count: numberOfColumns),
-        Array(repeating: nil, count: numberOfColumns),
-        Array(repeating: nil, count: numberOfColumns),
-        [nil, 2, nil, nil]
-    ]
-    
+        
     init(numberOfRows: Int = 4, numberOfColumns: Int = 4) {
         self.numberOfRows = numberOfRows
         self.numberOfColumns = numberOfColumns
         
-        self.tiles = Array(repeating: Array(repeating: nil, count: numberOfRows), count: numberOfColumns)
+        self.tiles = Array(repeating: Array(repeating: nil, count: numberOfColumns), count: numberOfRows)
         placeRandomTile()
     }
     
@@ -241,6 +199,48 @@ extension Game {
     
     enum Constants {
         static let initialValue: Int = 2
-        static let probabilityOfPower2 = 0.9
+        static let probabilityOfPower2 = 0.1
     }
 }
+
+
+
+//    lazy var testingTiles: [[TileModel?]] = {
+//        let tileNumbers = satisfyingTiles
+//        var tileModels: [[TileModel?]] = Array(repeating: Array(repeating: nil, count: numberOfColumns), count: numberOfRows)
+//        for i in tileNumbers.indices {
+//            for j in tileNumbers[i].indices {
+//                let tile = TileModel(power: tileNumbers[i][j], position: (i, j))
+//                tileModels[i][j] = tile
+//            }
+//        }
+//        return tileModels
+//    }()
+//    private lazy var allSameTiles = Array(repeating: Array(repeating: 1, count: numberOfColumns), count: numberOfRows)
+//
+//    private lazy var testCase = [
+//        [nil, nil, 1, nil],
+//        [nil, nil, 1, nil],
+//        [nil, nil, 3, nil],
+//        [nil, nil, nil, nil]
+//    ]
+//
+//    private let testTiles = [
+//        [nil, 1, 1, 2],
+//        [nil, 3, nil, nil],
+//        [nil, 3, nil, nil],
+//        [2, 3, nil, 2]
+//    ]
+//
+//    private lazy var oneTileBoard = [
+//        Array(repeating: nil, count: numberOfColumns),
+//        Array(repeating: nil, count: numberOfColumns),
+//        Array(repeating: nil, count: numberOfColumns),
+//        [nil, 2, nil, nil]
+//    ]
+//    private let satisfyingTiles = [
+//        [16,15,14,13],
+//        [9,10,11,12],
+//        [8,7,6,5],
+//        [2,2,3,4]
+//    ]

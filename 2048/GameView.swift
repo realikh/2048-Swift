@@ -11,19 +11,16 @@ import UIKit
 final class GameView: UIView {
     private let game: Game
     private let boardWidth: CGFloat
-    private let tileSize: CGSize
+    private let tileSide: CGFloat
     
     private var boardHeight: CGFloat {
-        let totalHeightOfTiles = tileSize.width * CGFloat(game.numberOfRows)
+        let totalHeightOfTiles = tileSide * CGFloat(game.numberOfRows)
         let totalHeightOfSpaces = tileSpacing * CGFloat(game.numberOfRows + 1)
         let boardHeight = totalHeightOfTiles + totalHeightOfSpaces
         return boardHeight
     }
     
-    private var tileSpacing: CGFloat {
-        let spacing = (boardWidth - CGFloat(game.numberOfColumns) * tileSize.width) / (CGFloat(game.numberOfRows + 1))
-        return spacing
-    }
+    private var tileSpacing: CGFloat
     
     
     
@@ -31,12 +28,31 @@ final class GameView: UIView {
         return self.subviews.compactMap({ $0 as? TileView })
     }
     
-    init(game: Game, tileCount: Int = 4, size: CGFloat, tileSize: CGFloat = 50) {
+    init(game: Game, boardWidth: CGFloat, tileSize: CGFloat = 50, tileSpacing: CGFloat? = nil) {
         self.game = game
-        self.boardWidth = size
-        self.tileSize = CGSize(width: tileSize, height: tileSize)
+        
+        let maximumTileSize = boardWidth / CGFloat(game.numberOfColumns)
+        
+        let tilesDontFit = maximumTileSize < tileSize
+        self.tileSide = tilesDontFit ? maximumTileSize : tileSize
+        
+        if let tileSpacing = tileSpacing {
+            let spacing = tilesDontFit ? 0 : tileSpacing
+            self.boardWidth = spacing * CGFloat(game.numberOfColumns + 1) + self.tileSide * CGFloat(game.numberOfColumns)
+            self.tileSpacing = spacing
+        } else {
+            self.tileSpacing = (boardWidth - CGFloat(game.numberOfColumns) * tileSide) / (CGFloat(game.numberOfRows + 1))
+            self.boardWidth = boardWidth
+        }
+        
+        if let tileSpacing = tileSpacing, tilesDontFit == false {
+            self.tileSpacing = tileSpacing
+        }
         super.init(frame: .zero)
-        let frame = CGRect(x: 0, y: 0, width: boardWidth, height: boardHeight)
+
+        
+        
+        let frame = CGRect(x: 0, y: 0, width: self.boardWidth, height: boardHeight)
         self.frame = frame
         configureUI()
         layoutUI()
@@ -70,9 +86,11 @@ final class GameView: UIView {
     }
     
     private func calculateTileFrame(_ i: Int, _ j: Int) -> CGRect {
-        let x = CGFloat(j) * tileSize.width + tileSpacing + tileSpacing * CGFloat(j)
-        let y = CGFloat(i) * tileSize.width + tileSpacing + tileSpacing * CGFloat(i)
-        return CGRect(origin: CGPoint(x: x, y: y), size: tileSize)
+        let x = CGFloat(j) * tileSide + tileSpacing + tileSpacing * CGFloat(j)
+        let y = CGFloat(i) * tileSide + tileSpacing + tileSpacing * CGFloat(i)
+        let size = CGSize(width: tileSide, height: tileSide)
+        
+        return CGRect(origin: CGPoint(x: x, y: y), size: size)
     }
     
     func fill() {
