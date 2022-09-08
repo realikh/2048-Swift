@@ -71,7 +71,7 @@ final class GameView: UIView {
         for i in 0..<game.tiles.count {
             for j in 0..<game.tiles[i].count {
                 guard let tile = game.tiles[i][j] else { continue }
-                let tileView = TileView(number: tile.value)
+                let tileView = TileView(tileModel: tile)
                 tileView.position = (i,j)
                 tileView.frame = calculateTileFrame(i, j)
                 addSubview(tileView)
@@ -85,8 +85,8 @@ extension GameView: GameDelegate {
         animateMoving(from: startPoint, to: endPoint)
     }
     
-    func tileHasMerged(from startPoint: Position, into endPoint: Position, resultingNumber: Int) {
-        animateMerging(from: startPoint, into: endPoint, result: resultingNumber)
+    func tileHasMerged(from startPoint: Position, into endPoint: Position, tile: TileModel) {
+        animateMerging(from: startPoint, into: endPoint, tile: tile)
     }
     
     func mergeCompleted() {
@@ -114,7 +114,7 @@ extension GameView: GameDelegate {
     private func animateMerging(
         from startPoint: Position,
         into endPoint: Position,
-        result: Int
+        tile: TileModel
     ) {
         print("Merging called")
         guard let tileToMerge = getTile(at: startPoint) else { print("❌ NO TILE TO MERGE AT \(startPoint)"); return }
@@ -123,7 +123,7 @@ extension GameView: GameDelegate {
         tileToMerge.position = nil
         tileToMergeInto.position = nil
         
-        let newTile = TileView(number: result, position: endPoint)
+        let newTile = TileView(tileModel: tile)
         newTile.backgroundColor = tileToMerge.tileColor
         
         addSubview(newTile)
@@ -150,7 +150,7 @@ extension GameView: GameDelegate {
                     withRelativeStartTime: 0,
                     relativeDuration: 0.8,
                     animations: {
-                        newTile.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+                        newTile.transform = CGAffineTransform(scaleX: Constants.tileScale, y: Constants.tileScale)
                     }
                 )
                 
@@ -180,6 +180,7 @@ extension GameView: GameDelegate {
 extension GameView {
     enum Constants {
         static let cornerRadius: CGFloat = 8
-        static let animationDuration: Double = 0.2
+        static let animationDuration: Double = 03
+        static let tileScale: CGFloat = 1.4
     }
 }

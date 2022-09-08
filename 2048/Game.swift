@@ -10,9 +10,8 @@ import Foundation
 typealias Position = (i: Int, j: Int)
 
 protocol GameDelegate: AnyObject {
-    func tileHasMerged(from startPoint: Position, into endPoint: Position, resultingNumber: Int)
+    func tileHasMerged(from startPoint: Position, into endPoint: Position, tile: TileModel)
     func tileHasMoved(from startPoint: Position, to endPoint: Position)
-    func mergeCompleted()
 }
 
 
@@ -29,7 +28,7 @@ class Game {
         var tileModels: [[TileModel?]] = Array(repeating: Array(repeating: nil, count: numberOfColumns), count: numberOfRows)
         for i in tileNumbers.indices {
             for j in tileNumbers[i].indices {
-                let tile = TileModel(value: tileNumbers[i][j], position: (i, j))
+                let tile = TileModel(power: tileNumbers[i][j], position: (i, j))
                 tileModels[i][j] = tile
             }
         }
@@ -37,37 +36,32 @@ class Game {
     }()
     
     private let satisfyingTiles = [
-        [65536,32768,16384,8192],
-        [4096,2048,1024,512].reversed(),
-        [32,64,128,256].reversed(),
-        [4,4,8,16]
+        [16,15,14,13],
+        [9,10,11,12],
+        [8,7,6,5],
+        [2,2,3,4]
     ]
     
-    private let allSameTiles = [
-        [2, 2, 2, 2],
-        [2, 2, 2, 2],
-        [2, 2, 2, 2],
-        [2, 2, 2, 2]
-    ]
+    private lazy var allSameTiles = Array(repeating: Array(repeating: 1, count: numberOfColumns), count: numberOfRows)
     
-    private let testCase = [
-        [nil, nil, 2, nil],
-        [nil, nil, 2, nil],
-        [nil, nil, 8, nil],
+    private lazy var testCase = [
+        [nil, nil, 1, nil],
+        [nil, nil, 1, nil],
+        [nil, nil, 3, nil],
         [nil, nil, nil, nil]
     ]
     
     private let testTiles = [
-        [nil, 2, 2, 4],
-        [nil, 8, nil, nil],
-        [nil, 8, nil, nil],
-        [4, 8, nil, 4]
+        [nil, 1, 1, 2],
+        [nil, 3, nil, nil],
+        [nil, 3, nil, nil],
+        [2, 3, nil, 2]
     ]
     
-    private let oneTileBoard = [
-        Array(repeating: nil, count: 4),
-        Array(repeating: nil, count: 4),
-        Array(repeating: nil, count: 4),
+    private lazy var oneTileBoard = [
+        Array(repeating: nil, count: numberOfColumns),
+        Array(repeating: nil, count: numberOfColumns),
+        Array(repeating: nil, count: numberOfColumns),
         [nil, 2, nil, nil]
     ]
     
@@ -84,7 +78,6 @@ class Game {
             moveDown()
         }
         resetTiles()
-        delegate?.mergeCompleted()
     }
     
     private func moveLeft() {
@@ -138,15 +131,23 @@ class Game {
                 
                 let tileToMergeInto = tiles[i][newJ - 1]!
                 
-                let newTile = tile.merged(into: tileToMergeInto)
+                var newTile = tile.merged(into: tileToMergeInto)
                 
                 
                 tiles[i][j] = nil
                 tiles[i][newJ - 1] = newTile
+                
+                newTile.position = (i, newJ - 1)
+                
+                let newTileWithCorrectCoordinates = TileModel(
+                    power: newTile.power,
+                    position: calculateCorrectIndicies(for: newTile.position),
+                    hasMerged: newTile.hasMerged
+                )
                 delegate?.tileHasMerged(
                     from: calculateCorrectIndicies(i, j),
                     into: calculateCorrectIndicies(i, newJ - 1),
-                    resultingNumber: newTile.value
+                    tile: newTileWithCorrectCoordinates
                 )
             }
         }
@@ -159,6 +160,10 @@ class Game {
             }
         }
     }
+    
+    private func putRandomTile() {
+        
+    }
 }
 
 extension Game {
@@ -167,6 +172,10 @@ extension Game {
         case up
         case right
         case down
+    }
+    
+    func calculateCorrectIndicies(for position: Position) -> Position {
+        return calculateCorrectIndicies(position.i, position.j)
     }
     
     func calculateCorrectIndicies(_ i: Int, _ j: Int) -> (i: Int, j: Int) {
@@ -180,5 +189,9 @@ extension Game {
         case .down:
             return (tiles[i].count - j - 1, i)
         }
+    }
+    
+    enum Constants {
+        static let initialValue: Int = 2
     }
 }
