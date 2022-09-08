@@ -7,105 +7,158 @@
 
 import Foundation
 
+typealias Position = (i: Int, j: Int)
+
 protocol GameDelegate: AnyObject {
-    func hasMoved(from: (i: Int, j: Int), to: (i: Int, j: Int))
-    func hasMerged(from: (i: Int, j: Int), into: (i: Int, j: Int), tileNumber: Int)
+    func tileHasMerged(from startPoint: Position, into endPoint: Position, resultingNumber: Int)
+    func tileHasMoved(from startPoint: Position, to endPoint: Position)
+    func mergeCompleted()
 }
+
 
 class Game {
     weak var delegate: GameDelegate?
     
-    var tiles: [[Int?]]
+    private let numberOfRows: Int = 4
+    private let numberOfColumns: Int = 4
+    
     private var movingDirection: MovingDirection = .left
     
-    init(tiles: [[Int?]]) {
-        self.tiles = tiles
+    lazy var tiles: [[TileModel?]] = {
+        let tileNumbers = allSameTiles
+        var tileModels: [[TileModel?]] = Array(repeating: Array(repeating: nil, count: numberOfColumns), count: numberOfRows)
+        for i in tileNumbers.indices {
+            for j in tileNumbers[i].indices {
+                let tile = TileModel(value: tileNumbers[i][j], position: (i, j))
+                tileModels[i][j] = tile
+            }
+        }
+        return tileModels
+    }()
+    
+    private let satisfyingTiles = [
+        [65536,32768,16384,8192],
+        [4096,2048,1024,512].reversed(),
+        [32,64,128,256].reversed(),
+        [4,4,8,16]
+    ]
+    
+    private let allSameTiles = [
+        [2, 2, 2, 2],
+        [2, 2, 2, 2],
+        [2, 2, 2, 2],
+        [2, 2, 2, 2]
+    ]
+    
+    private let testCase = [
+        [nil, nil, 2, nil],
+        [nil, nil, 2, nil],
+        [nil, nil, 8, nil],
+        [nil, nil, nil, nil]
+    ]
+    
+    private let testTiles = [
+        [nil, 2, 2, 4],
+        [nil, 8, nil, nil],
+        [nil, 8, nil, nil],
+        [4, 8, nil, 4]
+    ]
+    
+    private let oneTileBoard = [
+        Array(repeating: nil, count: 4),
+        Array(repeating: nil, count: 4),
+        Array(repeating: nil, count: 4),
+        [nil, 2, nil, nil]
+    ]
+    
+    func move(_ direction: MovingDirection) {
+        movingDirection = direction
+        switch direction {
+        case .left:
+            moveLeft()
+        case .up:
+            moveUp()
+        case .right:
+            moveRight()
+        case .down:
+            moveDown()
+        }
+        resetTiles()
+        delegate?.mergeCompleted()
     }
     
-    func moveLeft() {
-        movingDirection = .left
-        stackLeft()
-        mergeLeft()
+    private func moveLeft() {
+        shiftAndMerge()
     }
     
-    func moveUp() {
-        movingDirection = .up
+    private func moveUp() {
         tiles.transpose()
         tiles.reverse()
-        stackLeft()
-        mergeLeft()
+        moveLeft()
         tiles.reverse()
         tiles.transpose()
     }
     
-    func moveRight() {
-        movingDirection = .right
+    private func moveRight() {
         tiles.transpose()
         tiles.reverse()
         tiles.transpose()
         tiles.reverse()
-        stackLeft()
-        mergeLeft()
+        moveLeft()
         tiles.reverse()
         tiles.transpose()
         tiles.reverse()
         tiles.transpose()
     }
     
-    func moveDown() {
-        movingDirection = .down
+    private func moveDown() {
         tiles.reverse()
         tiles.transpose()
-        stackLeft()
-        mergeLeft()
+        moveLeft()
         tiles.transpose()
         tiles.reverse()
     }
     
-    private func stackLeft() {
-        for i in 0..<tiles.count {
-            for j in 0..<tiles[i].count {
+    private func shiftAndMerge() {
+        for i in tiles.indices {
+            for j in tiles[i].indices {
                 guard let tile = tiles[i][j] else { continue }
-                var newJPosition = j
-                while newJPosition > 0 && tiles[i][newJPosition - 1] == nil {
-                    newJPosition -= 1
+                var newJ = j
+                while newJ > 0 && tiles[i][newJ - 1] == nil {
+                    newJ -= 1
                 }
-                guard j != newJPosition else { continue }
+                
+                guard newJ > 0 && tile == tiles[i][newJ - 1] && !(tiles[i][newJ - 1]!.hasMerged) else {
+                    // Move tile if nothing nearby is mergabld
+                    tiles[i][j] = nil
+                    tiles[i][newJ] = tile
+                    delegate?.tileHasMoved(from: calculateCorrectIndicies(i, j), to: calculateCorrectIndicies(i, newJ))
+                    continue
+                }
+                
+                let tileToMergeInto = tiles[i][newJ - 1]!
+                
+                let newTile = tile.merged(into: tileToMergeInto)
+                
+                
                 tiles[i][j] = nil
-                tiles[i][newJPosition] = tile
-                delegate?.hasMoved(
+                tiles[i][newJ - 1] = newTile
+                delegate?.tileHasMerged(
                     from: calculateCorrectIndicies(i, j),
-                    to: calculateCorrectIndicies(i, newJPosition)
+                    into: calculateCorrectIndicies(i, newJ - 1),
+                    resultingNumber: newTile.value
                 )
             }
         }
     }
     
-    private func mergeLeft() {
-        for i in 0..<tiles.count {
-            for j in 1..<tiles[i].count {
-                guard let tile = tiles[i][j] else { continue }
-                if let tileOnTheWay = tiles[i][j - 1],
-                   tileOnTheWay == tile {
-                    tiles[i][j] = nil
-                    tiles[i][j - 1] = tile + tileOnTheWay
-                    delegate?.hasMerged(from: calculateCorrectIndicies(i, j), into: calculateCorrectIndicies(i, j - 1), tileNumber: tiles[i][j - 1]!)
-                } else {
-                    var newJPosition = j
-                    while newJPosition > 0 && tiles[i][newJPosition - 1] == nil {
-                        newJPosition -= 1
-                    }
-                    guard newJPosition != j else { continue }
-                    
-                    tiles[i][j] = nil
-                    tiles[i][newJPosition] = tile
-                    delegate?.hasMoved(from: calculateCorrectIndicies(i, j), to: calculateCorrectIndicies(i, newJPosition))
-                }
+    private func resetTiles() {
+        for i in tiles.indices {
+            for j in tiles[i].indices {
+                tiles[i][j]?.hasMerged = false
             }
         }
     }
-    
-    
 }
 
 extension Game {

@@ -18,8 +18,11 @@ final class TileView: UIView {
         return label
     }()
     
-    init(number: Int) {
+    var position: Position?
+    
+    init(number: Int, position: (i: Int, j: Int) = (0, 0)) {
         self.number = number
+        self.position = position
         super.init(frame: .zero)
         configureUI()
         layoutUI()
@@ -41,6 +44,14 @@ final class TileView: UIView {
             $0.edges.equalToSuperview().inset(5)
         }
     }
+    
+    func move(from startPosition: Position, to endPosition: Position, duration: Double = 0.2) {
+        let anim = CAKeyframeAnimation(keyPath: "transform.scale")
+        anim.duration = duration
+        anim.values = [1.111, 1]
+        anim.keyTimes = [NSNumber(floatLiteral: duration * 0.2), NSNumber(floatLiteral: duration)]
+        layer.add(anim, forKey: nil)
+    }
 }
 
 extension TileView {
@@ -56,7 +67,7 @@ extension TileView {
         case 256: return .tileWith256
         case 512: return .tileWith512
         case 1024: return .tileWith1024
-        case 2048: return .tileWith2048
+        case 2048: return .tileWith2048 
         default: return .defaultTile
         }
     }

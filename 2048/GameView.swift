@@ -6,6 +6,7 @@
 //
 
 import SnapKit
+import UIKit
 
 final class GameView: UIView {
     private let game: Game
@@ -17,13 +18,12 @@ final class GameView: UIView {
         return CGSize(width: size, height: size)
     }
     
-    private lazy var tileViews: [[TileView?]] = Array(
-        repeating: Array(
-            repeating: nil,
-            count: tileCount
-        ),
-        count: tileCount
-    )
+    private var moveAnimations: [TileMovement] = []
+    private var mergeAnimations: [TileMerge] = []
+    
+    private var tileViews: [TileView] {
+        return self.subviews.compactMap({ $0 as? TileView })
+    }
     
     init(game: Game, size: CGFloat, tileCount: Int = 4, tileSpacing: CGFloat = 8) {
         self.game = game
@@ -55,6 +55,8 @@ final class GameView: UIView {
                 self.addSubview(tile)
             }
         }
+        
+        fill()
     }
     
     private func calculateTileFrame(_ i: Int, _ j: Int) -> CGRect {
@@ -63,12 +65,16 @@ final class GameView: UIView {
         return CGRect(origin: CGPoint(x: x, y: y), size: tileSize)
     }
     
-    func fill(with tiles: [[Int?]]) {
-        for i in 0..<tiles.count {
-            for j in 0..<tiles[i].count {
-                guard let tile = tiles[i][j] else { continue }
-                let tileView = TileView(number: tile)
-                tileViews[i][j] = tileView
+    private func calculateTileFrame(for position: Position) -> CGRect {
+        return calculateTileFrame(position.i, position.j)
+    }
+    
+    func fill() {
+        for i in 0..<game.tiles.count {
+            for j in 0..<game.tiles[i].count {
+                guard let tile = game.tiles[i][j] else { continue }
+                let tileView = TileView(number: tile.value)
+                tileView.position = (i,j)
                 tileView.frame = calculateTileFrame(i, j)
                 addSubview(tileView)
             }
@@ -77,55 +83,74 @@ final class GameView: UIView {
 }
 
 extension GameView: GameDelegate {
-    func hasMoved(from: (i: Int, j: Int), to: (i: Int, j: Int)) {
-        guard let tileView = tileViews[from.i][from.j] else { return }
-        self.tileViews[to.i][to.j] = tileView
-        self.tileViews[from.i][from.j] = nil
-        
-        UIView.animate(
-            withDuration: 0.3,
-            delay: 0,
-            options: .curveLinear,
-            animations: {
-                tileView.frame = self.calculateTileFrame(to.i, to.j)
-                tileView.transform = CGAffineTransform(scaleX: 1.111, y: 1.111)
-            },
-            completion: { _ in
-                tileView.transform = .identity
-            }
-        )
-        
+    func tileHasMoved(from startPoint: Position, to endPoint: Position) {
+        animateMoving(from: startPoint, to: endPoint)
     }
     
-    func hasMerged(from: (i: Int, j: Int), into: (i: Int, j: Int), tileNumber: Int) {
-        guard let firstTileView = tileViews[from.i][from.j],
-              let secondTileView = tileViews[into.i][into.j] else { return }
+    func tileHasMerged(from startPoint: Position, into endPoint: Position, resultingNumber: Int) {
+        animateMerging(from: startPoint, into: endPoint, result: resultingNumber)
+    }
+    
+    func mergeCompleted() {
+
+    }
+    
+    private func animateMoving(from startPoint: (i: Int, j: Int), to endPoint: (i: Int, j: Int)) {
+        guard let tileView = getTile(at: startPoint) else { print("❌ NO TILE TO MOVE AT \(startPoint)"); return }
         
-        let newTile = TileView(number: tileNumber)
-        tileViews[into.i][into.j] = newTile
+        tileView.position = endPoint
         
         UIView.animate(
-            withDuration: 1,
-            delay: 0,
-            options: .curveLinear,
+            withDuration: 0.2,
+            delay: .zero,
+            options: .curveEaseOut,
             animations: {
-                firstTileView.frame = self.calculateTileFrame(into.i, into.j)
-                firstTileView.alpha = 0.3
-                firstTileView.transform = CGAffineTransform(scaleX: 1.111, y: 1.111)
+                tileView.frame = self.calculateTileFrame(endPoint.i, endPoint.j)
             },
-            completion: { completed in
-                print("realikh completion called; completed: \(completed)")
-                self.addSubview(newTile)
-                newTile.frame = self.calculateTileFrame(into.i, into.j)
+            completion: { _ in
                 
-                firstTileView.removeFromSuperview()
-                secondTileView.removeFromSuperview()
             }
         )
+    }
+    
+    private func animateMerging(
+        from startPoint: Position,
+        into endPoint: Position,
+        result: Int
+    ) {
+        print("Merging called")
+        guard let tileToMerge = getTile(at: startPoint) else { print("❌ NO TILE TO MERGE AT \(startPoint)"); return }
+        guard let tileToMergeInto = getTile(at: endPoint) else { print("❌ NO TILE TO MERGE INTOAT \(endPoint)"); return }
         
+        tileToMerge.position = nil
+        tileToMergeInto.position = nil
         
+        let newTile = TileView(number: result, position: endPoint)
+        addSubview(newTile)
+        newTile.frame = tileToMerge.frame
+        tileToMerge.removeFromSuperview()
         
-        
+        UIView.animate(
+            withDuration: 0.2,
+            delay: 0,
+            options: .curveEaseOut,
+            animations: {
+                newTile.frame = self.calculateTileFrame(for: endPoint)
+                newTile.transform = CGAffineTransform(scaleX: 1.11, y: 1.11)
+            },
+            completion: { _ in
+                newTile.transform = .identity
+                tileToMergeInto.removeFromSuperview()
+            }
+        )
+    }
+    
+    private func getTile(at position: Position) -> TileView? {
+        return tileViews.first(where: { $0.position != nil && $0.position! == position })
+    }
+    
+    private func removeTilesFromSuperview() {
+        tileViews.filter({ $0.position == nil }).forEach({ $0.removeFromSuperview() })
     }
 }
 
@@ -133,4 +158,16 @@ extension GameView {
     enum Constants {
         static let cornerRadius: CGFloat = 8
     }
+}
+
+struct TileMovement {
+    let startPoint: Position
+    let endPoint: Position
+}
+
+struct TileMerge {
+    let startPoint1: Position
+    let startPoint2: Position?
+    let endPoint: Position
+    let result: Int
 }
