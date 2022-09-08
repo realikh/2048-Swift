@@ -21,6 +21,7 @@ final class GameView: UIView {
     }
     
     private var tileSpacing: CGFloat
+    private let cornerRadius: CGFloat
     
     
     
@@ -28,7 +29,7 @@ final class GameView: UIView {
         return self.subviews.compactMap({ $0 as? TileView })
     }
     
-    init(game: Game, boardWidth: CGFloat, tileSize: CGFloat = 50, tileSpacing: CGFloat? = nil) {
+    init(game: Game, boardWidth: CGFloat, tileSize: CGFloat = 50, tileSpacing: CGFloat? = nil, cornerRadius: CGFloat? = nil) {
         self.game = game
         
         let maximumTileSize = boardWidth / CGFloat(game.numberOfColumns)
@@ -48,6 +49,8 @@ final class GameView: UIView {
         if let tileSpacing = tileSpacing, tilesDontFit == false {
             self.tileSpacing = tileSpacing
         }
+        
+        self.cornerRadius = cornerRadius ?? self.tileSide * 0.2
         super.init(frame: .zero)
 
         
@@ -65,7 +68,7 @@ final class GameView: UIView {
     private func configureUI() {
         game.delegate = self
         self.backgroundColor = .gameViewBackground
-        self.layer.cornerRadius = Constants.cornerRadius
+        self.layer.cornerRadius = cornerRadius
     }
     
     private func layoutUI() {
@@ -73,7 +76,7 @@ final class GameView: UIView {
             for j in 0..<game.numberOfColumns {
                 let emptyTile = UIView(frame: calculateTileFrame(i, j))
                 emptyTile.backgroundColor = .tileSection
-                emptyTile.layer.cornerRadius = Constants.cornerRadius
+                emptyTile.layer.cornerRadius = cornerRadius
                 self.addSubview(emptyTile)
             }
         }
@@ -98,6 +101,7 @@ final class GameView: UIView {
             for j in 0..<game.tiles[i].count {
                 guard let tile = game.tiles[i][j] else { continue }
                 let tileView = TileView(tileModel: tile)
+                tileView.layer.cornerRadius = cornerRadius
                 tileView.position = (i,j)
                 tileView.frame = calculateTileFrame(i, j)
                 addSubview(tileView)
@@ -151,6 +155,7 @@ extension GameView: GameDelegate {
         
         let newTile = TileView(tileModel: tile)
         newTile.backgroundColor = tileToMerge.tileColor
+        newTile.layer.cornerRadius = cornerRadius
         
         addSubview(newTile)
         let tilesAreNextToEachOther = abs(startPoint.i - endPoint.i) == 1 || abs(startPoint.j - endPoint.j) == 1
@@ -197,6 +202,7 @@ extension GameView: GameDelegate {
     func animateAppearance(at position: Position, tile: TileModel) {
         let newTile = TileView(tileModel: tile)
         newTile.alpha = Constants.tileAppearanceInitialAlpha
+        newTile.layer.cornerRadius = cornerRadius
         newTile.frame = calculateTileFrame(for: position)
         newTile.transform = CGAffineTransform(scaleX: Constants.tileAppearanceScale, y: Constants.tileAppearanceScale)
         addSubview(newTile)
@@ -239,7 +245,6 @@ extension GameView: GameDelegate {
 
 extension GameView {
     enum Constants {
-        static let cornerRadius: CGFloat = 8
         static let animationDuration: Double = 0.2
         static let tileScale: CGFloat = 1.4
         static let tileAppearanceScale: CGFloat = 0.5

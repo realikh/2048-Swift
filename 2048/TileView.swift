@@ -14,8 +14,8 @@ final class TileView: UIView {
     
     private let numberLabel: UILabel = {
         let label = UILabel()
-        label.font = .boldSystemFont(ofSize: 32)
-        label.textColor = .white
+        let font = UIFont(name: "LexendDeca-Bold", size: 40)
+        label.font = font
         label.textAlignment = .center
         label.adjustsFontSizeToFitWidth = true
         return label
@@ -34,9 +34,10 @@ final class TileView: UIView {
     }
     
     private func configureUI() {
+        clipsToBounds = true
         numberLabel.text = "\(tileModel.value)"
+        numberLabel.textColor = numberColor
         backgroundColor = tileColor
-        layer.cornerRadius = GameView.Constants.cornerRadius
     }
     
     private func layoutUI() {
@@ -54,18 +55,25 @@ final class TileView: UIView {
 extension TileView {
     var tileColor: UIColor {
         switch tileModel.power {
-        case 1: return .tileWith2
-        case 2: return .tileWith4
-        case 3: return .tileWith8
-        case 4: return .tileWith16
-        case 5: return .tileWith32
-        case 6: return .tileWith64
-        case 7: return .tileWith128
-        case 8: return .tileWith256
-        case 9: return .tileWith512
-        case 10: return .tileWith1024
-        case 11: return .tileWith2048
-        default: return .defaultTile
+        case 1: return .powerOf1Color
+        case 2: return .powerOf2Color
+        case 3: return .powerOf3Color
+        case 4: return .powerOf4Color
+        case 5: return .powerOf5Color
+        case 6: return .powerOf6Color
+        case 7: return .powerOf7Color
+        case 8: return .powerOf8Color
+        case 9: return .powerOf9Color
+        case 10: return .powerOf10Color
+        case 11: return .powerOf11Color
+        default: return .defaultTileColor
+        }
+    }
+    
+    var numberColor: UIColor {
+        switch tileModel.power {
+        case 1, 2, 3: return .black.withAlphaComponent(0.5)
+        default: return .white.withAlphaComponent(0.85)
         }
     }
 }

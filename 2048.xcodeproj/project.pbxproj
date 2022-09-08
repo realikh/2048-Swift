@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		773EECB228CA86D5001E4C68 /* LexendDeca-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 773EECA928CA86D4001E4C68 /* LexendDeca-Light.ttf */; };
+		773EECB328CA86D5001E4C68 /* LexendDeca-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 773EECAA28CA86D4001E4C68 /* LexendDeca-ExtraBold.ttf */; };
+		773EECB428CA86D5001E4C68 /* LexendDeca-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 773EECAB28CA86D4001E4C68 /* LexendDeca-ExtraLight.ttf */; };
+		773EECB528CA86D5001E4C68 /* LexendDeca-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 773EECAC28CA86D4001E4C68 /* LexendDeca-Thin.ttf */; };
+		773EECB628CA86D5001E4C68 /* LexendDeca-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 773EECAD28CA86D5001E4C68 /* LexendDeca-Regular.ttf */; };
+		773EECB728CA86D5001E4C68 /* LexendDeca-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 773EECAE28CA86D5001E4C68 /* LexendDeca-Black.ttf */; };
+		773EECB828CA86D5001E4C68 /* LexendDeca-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 773EECAF28CA86D5001E4C68 /* LexendDeca-SemiBold.ttf */; };
+		773EECB928CA86D5001E4C68 /* LexendDeca-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 773EECB028CA86D5001E4C68 /* LexendDeca-Medium.ttf */; };
+		773EECBA28CA86D5001E4C68 /* LexendDeca-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 773EECB128CA86D5001E4C68 /* LexendDeca-Bold.ttf */; };
 		773EF90E28BE4F6F0037D960 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 773EF90D28BE4F6F0037D960 /* AppDelegate.swift */; };
 		773EF91028BE4F6F0037D960 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 773EF90F28BE4F6F0037D960 /* SceneDelegate.swift */; };
 		773EF91228BE4F6F0037D960 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 773EF91128BE4F6F0037D960 /* MainViewController.swift */; };
@@ -22,6 +31,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		773EECA928CA86D4001E4C68 /* LexendDeca-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "LexendDeca-Light.ttf"; path = "../../../../Downloads/Lexend_Deca/static/LexendDeca-Light.ttf"; sourceTree = "<group>"; };
+		773EECAA28CA86D4001E4C68 /* LexendDeca-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "LexendDeca-ExtraBold.ttf"; path = "../../../../Downloads/Lexend_Deca/static/LexendDeca-ExtraBold.ttf"; sourceTree = "<group>"; };
+		773EECAB28CA86D4001E4C68 /* LexendDeca-ExtraLight.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "LexendDeca-ExtraLight.ttf"; path = "../../../../Downloads/Lexend_Deca/static/LexendDeca-ExtraLight.ttf"; sourceTree = "<group>"; };
+		773EECAC28CA86D4001E4C68 /* LexendDeca-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "LexendDeca-Thin.ttf"; path = "../../../../Downloads/Lexend_Deca/static/LexendDeca-Thin.ttf"; sourceTree = "<group>"; };
+		773EECAD28CA86D5001E4C68 /* LexendDeca-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "LexendDeca-Regular.ttf"; path = "../../../../Downloads/Lexend_Deca/static/LexendDeca-Regular.ttf"; sourceTree = "<group>"; };
+		773EECAE28CA86D5001E4C68 /* LexendDeca-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "LexendDeca-Black.ttf"; path = "../../../../Downloads/Lexend_Deca/static/LexendDeca-Black.ttf"; sourceTree = "<group>"; };
+		773EECAF28CA86D5001E4C68 /* LexendDeca-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "LexendDeca-SemiBold.ttf"; path = "../../../../Downloads/Lexend_Deca/static/LexendDeca-SemiBold.ttf"; sourceTree = "<group>"; };
+		773EECB028CA86D5001E4C68 /* LexendDeca-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "LexendDeca-Medium.ttf"; path = "../../../../Downloads/Lexend_Deca/static/LexendDeca-Medium.ttf"; sourceTree = "<group>"; };
+		773EECB128CA86D5001E4C68 /* LexendDeca-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "LexendDeca-Bold.ttf"; path = "../../../../Downloads/Lexend_Deca/static/LexendDeca-Bold.ttf"; sourceTree = "<group>"; };
 		773EF90A28BE4F6F0037D960 /* 2048.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 2048.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		773EF90D28BE4F6F0037D960 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		773EF90F28BE4F6F0037D960 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -69,6 +87,39 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		773EECA428CA8654001E4C68 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				773EF91828BE4F720037D960 /* LaunchScreen.storyboard */,
+				773EF91628BE4F720037D960 /* Assets.xcassets */,
+				773EECA528CA8666001E4C68 /* Fonts */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		773EECA528CA8666001E4C68 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		773EECA628CA866C001E4C68 /* LexendDeca */ = {
+			isa = PBXGroup;
+			children = (
+				773EECAE28CA86D5001E4C68 /* LexendDeca-Black.ttf */,
+				773EECB128CA86D5001E4C68 /* LexendDeca-Bold.ttf */,
+				773EECAA28CA86D4001E4C68 /* LexendDeca-ExtraBold.ttf */,
+				773EECAB28CA86D4001E4C68 /* LexendDeca-ExtraLight.ttf */,
+				773EECA928CA86D4001E4C68 /* LexendDeca-Light.ttf */,
+				773EECB028CA86D5001E4C68 /* LexendDeca-Medium.ttf */,
+				773EECAD28CA86D5001E4C68 /* LexendDeca-Regular.ttf */,
+				773EECAF28CA86D5001E4C68 /* LexendDeca-SemiBold.ttf */,
+				773EECAC28CA86D4001E4C68 /* LexendDeca-Thin.ttf */,
+			);
+			path = LexendDeca;
+			sourceTree = "<group>";
+		};
 		773EF90128BE4F6F0037D960 = {
 			isa = PBXGroup;
 			children = (
@@ -99,8 +150,8 @@
 				773EF92528BE6FD70037D960 /* TileModel.swift */,
 				773EF92728BE709A0037D960 /* Game.swift */,
 				77FC3AFC28C53542004B6FF9 /* ArrayExtension.swift */,
-				773EF91628BE4F720037D960 /* Assets.xcassets */,
-				773EF91828BE4F720037D960 /* LaunchScreen.storyboard */,
+				773EECA428CA8654001E4C68 /* Resources */,
+				773EECA628CA866C001E4C68 /* LexendDeca */,
 				773EF91B28BE4F720037D960 /* Info.plist */,
 			);
 			path = 2048;
@@ -166,8 +217,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				773EECB428CA86D5001E4C68 /* LexendDeca-ExtraLight.ttf in Resources */,
+				773EECB628CA86D5001E4C68 /* LexendDeca-Regular.ttf in Resources */,
 				773EF91A28BE4F720037D960 /* LaunchScreen.storyboard in Resources */,
 				773EF91728BE4F720037D960 /* Assets.xcassets in Resources */,
+				773EECB228CA86D5001E4C68 /* LexendDeca-Light.ttf in Resources */,
+				773EECB528CA86D5001E4C68 /* LexendDeca-Thin.ttf in Resources */,
+				773EECB928CA86D5001E4C68 /* LexendDeca-Medium.ttf in Resources */,
+				773EECB328CA86D5001E4C68 /* LexendDeca-ExtraBold.ttf in Resources */,
+				773EECB728CA86D5001E4C68 /* LexendDeca-Black.ttf in Resources */,
+				773EECB828CA86D5001E4C68 /* LexendDeca-SemiBold.ttf in Resources */,
+				773EECBA28CA86D5001E4C68 /* LexendDeca-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

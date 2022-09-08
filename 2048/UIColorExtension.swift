@@ -17,52 +17,56 @@ extension UIColor {
         return UIColor(hex: "#6382e0")
     }
     
-    static var tileWith2: UIColor {
-        UIColor(hex: "#ffd280")
+    static var powerOf1Color: UIColor {
+        UIColor(hex: "#ffcc99")
     }
     
-    static var tileWith4: UIColor {
-        UIColor(hex: "#f2af35")
+    static var powerOf2Color: UIColor {
+        UIColor(hex: "#ffcc66")
     }
     
-    static var tileWith8: UIColor {
-        UIColor(hex: "#f27d35")
+    static var powerOf3Color: UIColor {
+        UIColor(hex: "#ff9966")
     }
     
-    static var tileWith16: UIColor {
-        UIColor(hex: "#e05a07")
+    static var powerOf4Color: UIColor {
+        UIColor(hex: "#ff6600")
     }
     
-    static var tileWith32: UIColor {
-        UIColor(hex: "#ff4221")
+    static var powerOf5Color: UIColor {
+        UIColor(hex: "#ff5050")
     }
     
-    static var tileWith64: UIColor {
-        UIColor(hex: "#de0000")
+    static var powerOf6Color: UIColor {
+        UIColor(hex: "#009900")
     }
     
-    static var tileWith128: UIColor {
-        UIColor(hex: "#68f765")
+    static var powerOf7Color: UIColor {
+        UIColor(hex: "#00ff00")
     }
     
-    static var tileWith256: UIColor {
-        UIColor(hex: "#36bd24")
+    static var powerOf8Color: UIColor {
+        UIColor(hex: "#00ccff")
     }
     
-    static var tileWith512: UIColor {
-        UIColor(hex: "#1fcc6d")
+    static var powerOf9Color: UIColor {
+        UIColor(hex: "#00ba00")
     }
     
-    static var tileWith1024: UIColor {
-        UIColor(hex: "#12ff9c")
+    static var powerOf10Color: UIColor {
+        UIColor(hex: "#3366ff")
     }
     
-    static var tileWith2048: UIColor {
-        UIColor(hex: "#c547ff")
+    static var powerOf11Color: UIColor {
+        UIColor(hex: "#ff00ff")
     }
     
-    static var defaultTile: UIColor {
+    static var defaultTileColor: UIColor {
         UIColor(hex: "#160a1c")
+    }
+    
+    static var darkTitleColor: UIColor {
+        UIColor(hex: "#0c1330")
     }
 }
 

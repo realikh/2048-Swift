@@ -9,7 +9,7 @@ import SnapKit
 import CoreGraphics
 
 final class MainViewController: UIViewController {
-    private lazy var game = Game(numberOfRows: 20, numberOfColumns: 10)
+    private lazy var game = Game(numberOfRows: 4, numberOfColumns: 4)
     
     private lazy var gameView = GameView(game: game, boardWidth: UIScreen.main.bounds.width * 0.9, tileSize: 80, tileSpacing: 6)
 
