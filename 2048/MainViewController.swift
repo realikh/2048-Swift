@@ -12,8 +12,6 @@ final class MainViewController: UIViewController {
     private lazy var game = Game()
     
     private lazy var gameView = GameView(game: game, size: UIScreen.main.bounds.width * 0.9)
-    
-    private let buttonNames = ["Left", "Up", "Right", "Down"]
 
     override func viewDidLoad() {
         super.viewDidLoad()

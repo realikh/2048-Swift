@@ -19,13 +19,15 @@ protocol GameDelegate: AnyObject {
 class Game {
     weak var delegate: GameDelegate?
     
-    private let numberOfRows: Int = 4
-    private let numberOfColumns: Int = 4
+    let numberOfRows: Int
+    let numberOfColumns: Int
     
     private var movingDirection: MovingDirection = .left
     private var tilesHaveMovedOrMerged = false
     
-    lazy var tiles: [[TileModel?]] = {
+    var tiles: [[TileModel?]]
+    
+    lazy var testingTiles: [[TileModel?]] = {
         let tileNumbers = satisfyingTiles
         var tileModels: [[TileModel?]] = Array(repeating: Array(repeating: nil, count: numberOfColumns), count: numberOfRows)
         for i in tileNumbers.indices {
@@ -78,6 +80,14 @@ class Game {
         Array(repeating: nil, count: numberOfColumns),
         [nil, 2, nil, nil]
     ]
+    
+    init(numberOfRows: Int = 4, numberOfColumns: Int = 4) {
+        self.numberOfRows = numberOfRows
+        self.numberOfColumns = numberOfColumns
+        
+        self.tiles = Array(repeating: Array(repeating: nil, count: numberOfRows), count: numberOfColumns)
+        placeRandomTile()
+    }
     
     func move(_ direction: MovingDirection) {
         movingDirection = direction
@@ -230,7 +240,7 @@ extension Game {
     }
     
     enum Constants {
-        static let initialValue: Int = 3
-        static let probabilityOfPower2 = 0.1
+        static let initialValue: Int = 2
+        static let probabilityOfPower2 = 0.9
     }
 }

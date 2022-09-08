@@ -10,26 +10,34 @@ import UIKit
 
 final class GameView: UIView {
     private let game: Game
-    private let size: CGFloat
-    private let tileCount: Int
-    private let tileSpacing: CGFloat
-    private var tileSize: CGSize {
-        let size = (size - tileSpacing * CGFloat((tileCount + 1))) / CGFloat(tileCount)
-        return CGSize(width: size, height: size)
+    private let boardWidth: CGFloat
+    private let tileSize: CGSize
+    
+    private var boardHeight: CGFloat {
+        let totalHeightOfTiles = tileSize.width * CGFloat(game.numberOfRows)
+        let totalHeightOfSpaces = tileSpacing * CGFloat(game.numberOfRows + 1)
+        let boardHeight = totalHeightOfTiles + totalHeightOfSpaces
+        return boardHeight
     }
+    
+    private var tileSpacing: CGFloat {
+        let spacing = (boardWidth - CGFloat(game.numberOfColumns) * tileSize.width) / (CGFloat(game.numberOfRows + 1))
+        return spacing
+    }
+    
     
     
     private var tileViews: [TileView] {
         return self.subviews.compactMap({ $0 as? TileView })
     }
     
-    init(game: Game, size: CGFloat, tileCount: Int = 4, tileSpacing: CGFloat = 8) {
+    init(game: Game, tileCount: Int = 4, size: CGFloat, tileSize: CGFloat = 50) {
         self.game = game
-        self.size = size
-        self.tileCount = tileCount
-        self.tileSpacing = tileSpacing
-        let frame = CGRect(x: 0, y: 0, width: size, height: size)
-        super.init(frame: frame)
+        self.boardWidth = size
+        self.tileSize = CGSize(width: tileSize, height: tileSize)
+        super.init(frame: .zero)
+        let frame = CGRect(x: 0, y: 0, width: boardWidth, height: boardHeight)
+        self.frame = frame
         configureUI()
         layoutUI()
     }
@@ -45,12 +53,12 @@ final class GameView: UIView {
     }
     
     private func layoutUI() {
-        for i in 0..<tileCount {
-            for j in 0..<tileCount {
-                let tile = UIView(frame: calculateTileFrame(i, j))
-                tile.backgroundColor = .tileSection
-                tile.layer.cornerRadius = Constants.cornerRadius
-                self.addSubview(tile)
+        for i in 0..<game.numberOfRows {
+            for j in 0..<game.numberOfColumns {
+                let emptyTile = UIView(frame: calculateTileFrame(i, j))
+                emptyTile.backgroundColor = .tileSection
+                emptyTile.layer.cornerRadius = Constants.cornerRadius
+                self.addSubview(emptyTile)
             }
         }
         
