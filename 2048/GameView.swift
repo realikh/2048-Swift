@@ -89,8 +89,8 @@ extension GameView: GameDelegate {
         animateMerging(from: startPoint, into: endPoint, tile: tile)
     }
     
-    func mergeCompleted() {
-
+    func randomTilePlaced(at position: Position, tile: TileModel) {
+        animateAppearance(at: position, tile: tile)
     }
     
     private func animateMoving(from startPoint: (i: Int, j: Int), to endPoint: (i: Int, j: Int)) {
@@ -168,6 +168,40 @@ extension GameView: GameDelegate {
         )
     }
     
+    func animateAppearance(at position: Position, tile: TileModel) {
+        let newTile = TileView(tileModel: tile)
+        newTile.alpha = Constants.tileAppearanceInitialAlpha
+        newTile.frame = calculateTileFrame(for: position)
+        newTile.transform = CGAffineTransform(scaleX: Constants.tileAppearanceScale, y: Constants.tileAppearanceScale)
+        addSubview(newTile)
+        
+        UIView.animateKeyframes(
+            withDuration: Constants.animationDuration,
+            delay: 0,
+            options: .calculationModeCubic,
+            animations: {
+                newTile.alpha = 1
+                
+                UIView.addKeyframe(
+                    withRelativeStartTime: 0,
+                    relativeDuration: 0.8,
+                    animations: {
+                        newTile.transform = CGAffineTransform(scaleX: Constants.tileScale, y: Constants.tileScale)
+                    }
+                )
+                
+                UIView.addKeyframe(
+                    withRelativeStartTime: 0.8,
+                    relativeDuration: 0.2,
+                    animations: {
+                        newTile.transform = .identity
+                    }
+                )
+            },
+            completion: nil
+        )
+    }
+    
     private func getTile(at position: Position) -> TileView? {
         return tileViews.first(where: { $0.position != nil && $0.position! == position })
     }
@@ -180,7 +214,9 @@ extension GameView: GameDelegate {
 extension GameView {
     enum Constants {
         static let cornerRadius: CGFloat = 8
-        static let animationDuration: Double = 03
+        static let animationDuration: Double = 0.2
         static let tileScale: CGFloat = 1.4
+        static let tileAppearanceScale: CGFloat = 0.5
+        static let tileAppearanceInitialAlpha = 0.4
     }
 }

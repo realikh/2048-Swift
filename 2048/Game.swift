@@ -12,6 +12,7 @@ typealias Position = (i: Int, j: Int)
 protocol GameDelegate: AnyObject {
     func tileHasMerged(from startPoint: Position, into endPoint: Position, tile: TileModel)
     func tileHasMoved(from startPoint: Position, to endPoint: Position)
+    func randomTilePlaced(at position: Position, tile: TileModel)
 }
 
 
@@ -22,6 +23,7 @@ class Game {
     private let numberOfColumns: Int = 4
     
     private var movingDirection: MovingDirection = .left
+    private var tilesHaveMovedOrMerged = false
     
     lazy var tiles: [[TileModel?]] = {
         let tileNumbers = satisfyingTiles
@@ -34,6 +36,18 @@ class Game {
         }
         return tileModels
     }()
+    
+    private var emptyPositions: [Position] {
+        var result: [Position] = []
+        for i in tiles.indices {
+            for j in tiles[i].indices {
+                if tiles[i][j] == nil {
+                    result.append((i, j))
+                }
+            }
+        }
+        return result
+    }
     
     private let satisfyingTiles = [
         [16,15,14,13],
@@ -67,6 +81,8 @@ class Game {
     
     func move(_ direction: MovingDirection) {
         movingDirection = direction
+        tilesHaveMovedOrMerged = false
+        
         switch direction {
         case .left:
             moveLeft()
@@ -78,6 +94,9 @@ class Game {
             moveDown()
         }
         resetTiles()
+        if tilesHaveMovedOrMerged {
+            placeRandomTile()
+        }
     }
     
     private func moveLeft() {
@@ -125,6 +144,9 @@ class Game {
                     // Move tile if nothing nearby is mergabld
                     tiles[i][j] = nil
                     tiles[i][newJ] = tile
+                    if tilesHaveMovedOrMerged == false {
+                        tilesHaveMovedOrMerged = j != newJ
+                    }
                     delegate?.tileHasMoved(from: calculateCorrectIndicies(i, j), to: calculateCorrectIndicies(i, newJ))
                     continue
                 }
@@ -138,6 +160,7 @@ class Game {
                 tiles[i][newJ - 1] = newTile
                 
                 newTile.position = (i, newJ - 1)
+                tilesHaveMovedOrMerged = true
                 
                 let newTileWithCorrectCoordinates = TileModel(
                     power: newTile.power,
@@ -161,8 +184,23 @@ class Game {
         }
     }
     
-    private func putRandomTile() {
+    private func placeRandomTile() {
+        guard let randomPosition = getRandomPosition() else { return }
+        let power = getPowerOfRandomTile()
+        let newTile = TileModel(power: power, position: randomPosition, hasMerged: false)
+        tiles[randomPosition.i][randomPosition.j] = newTile
         
+        delegate?.randomTilePlaced(at: randomPosition, tile: newTile)
+    }
+    
+    private func getPowerOfRandomTile() -> Int {
+        let randomResult = Double.random(in: 0..<1)
+        let power = randomResult < Constants.probabilityOfPower2 ? 2 : 1
+        return power
+    }
+    
+    private func getRandomPosition() -> Position? {
+        return emptyPositions.randomElement()
     }
 }
 
@@ -192,6 +230,7 @@ extension Game {
     }
     
     enum Constants {
-        static let initialValue: Int = 2
+        static let initialValue: Int = 3
+        static let probabilityOfPower2 = 0.1
     }
 }
