@@ -25,7 +25,7 @@ class Game {
     private var movingDirection: MovingDirection = .left
     
     lazy var tiles: [[TileModel?]] = {
-        let tileNumbers = allSameTiles
+        let tileNumbers = satisfyingTiles
         var tileModels: [[TileModel?]] = Array(repeating: Array(repeating: nil, count: numberOfColumns), count: numberOfRows)
         for i in tileNumbers.indices {
             for j in tileNumbers[i].indices {

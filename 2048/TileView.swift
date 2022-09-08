@@ -45,12 +45,8 @@ final class TileView: UIView {
         }
     }
     
-    func move(from startPosition: Position, to endPosition: Position, duration: Double = 0.2) {
-        let anim = CAKeyframeAnimation(keyPath: "transform.scale")
-        anim.duration = duration
-        anim.values = [1.111, 1]
-        anim.keyTimes = [NSNumber(floatLiteral: duration * 0.2), NSNumber(floatLiteral: duration)]
-        layer.add(anim, forKey: nil)
+    func setTileColor() {
+        backgroundColor = tileColor
     }
 }
 

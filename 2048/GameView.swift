@@ -18,8 +18,6 @@ final class GameView: UIView {
         return CGSize(width: size, height: size)
     }
     
-    private var moveAnimations: [TileMovement] = []
-    private var mergeAnimations: [TileMerge] = []
     
     private var tileViews: [TileView] {
         return self.subviews.compactMap({ $0 as? TileView })
@@ -59,14 +57,14 @@ final class GameView: UIView {
         fill()
     }
     
+    private func calculateTileFrame(for position: Position) -> CGRect {
+        return calculateTileFrame(position.i, position.j)
+    }
+    
     private func calculateTileFrame(_ i: Int, _ j: Int) -> CGRect {
         let x = CGFloat(j) * tileSize.width + tileSpacing + tileSpacing * CGFloat(j)
         let y = CGFloat(i) * tileSize.width + tileSpacing + tileSpacing * CGFloat(i)
         return CGRect(origin: CGPoint(x: x, y: y), size: tileSize)
-    }
-    
-    private func calculateTileFrame(for position: Position) -> CGRect {
-        return calculateTileFrame(position.i, position.j)
     }
     
     func fill() {
@@ -101,7 +99,7 @@ extension GameView: GameDelegate {
         tileView.position = endPoint
         
         UIView.animate(
-            withDuration: 0.2,
+            withDuration: Constants.animationDuration,
             delay: .zero,
             options: .curveEaseOut,
             animations: {
@@ -126,20 +124,45 @@ extension GameView: GameDelegate {
         tileToMergeInto.position = nil
         
         let newTile = TileView(number: result, position: endPoint)
-        addSubview(newTile)
-        newTile.frame = tileToMerge.frame
-        tileToMerge.removeFromSuperview()
+        newTile.backgroundColor = tileToMerge.tileColor
         
-        UIView.animate(
-            withDuration: 0.2,
+        addSubview(newTile)
+        let tilesAreNextToEachOther = abs(startPoint.i - endPoint.i) == 1 || abs(startPoint.j - endPoint.j) == 1
+        newTile.frame = tilesAreNextToEachOther ? self.calculateTileFrame(for: endPoint) : tileToMerge.frame
+
+        tileToMerge.removeFromSuperview()
+    
+        UIView.animateKeyframes(
+            withDuration: Constants.animationDuration,
             delay: 0,
-            options: .curveEaseOut,
+            options: .calculationModeCubic,
             animations: {
-                newTile.frame = self.calculateTileFrame(for: endPoint)
-                newTile.transform = CGAffineTransform(scaleX: 1.11, y: 1.11)
+                UIView.addKeyframe(
+                    withRelativeStartTime: 0,
+                    relativeDuration: 1,
+                    animations: {
+                        newTile.backgroundColor = newTile.tileColor
+                        newTile.frame = self.calculateTileFrame(for: endPoint)
+                    }
+                )
+                
+                UIView.addKeyframe(
+                    withRelativeStartTime: 0,
+                    relativeDuration: 0.8,
+                    animations: {
+                        newTile.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+                    }
+                )
+                
+                UIView.addKeyframe(
+                    withRelativeStartTime: 0.8,
+                    relativeDuration: 0.2,
+                    animations: {
+                        newTile.transform = .identity
+                    }
+                )
             },
             completion: { _ in
-                newTile.transform = .identity
                 tileToMergeInto.removeFromSuperview()
             }
         )
@@ -157,17 +180,6 @@ extension GameView: GameDelegate {
 extension GameView {
     enum Constants {
         static let cornerRadius: CGFloat = 8
+        static let animationDuration: Double = 0.2
     }
-}
-
-struct TileMovement {
-    let startPoint: Position
-    let endPoint: Position
-}
-
-struct TileMerge {
-    let startPoint1: Position
-    let startPoint2: Position?
-    let endPoint: Position
-    let result: Int
 }
