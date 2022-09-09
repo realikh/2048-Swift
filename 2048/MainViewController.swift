@@ -11,13 +11,20 @@ import CoreGraphics
 final class MainViewController: UIViewController {
     private lazy var game = Game(numberOfRows: 4, numberOfColumns: 4)
     
+    private lazy var scoresView = ScoresContainerView(dataSource: self)
+    
     private lazy var gameView = GameView(game: game, boardWidth: UIScreen.main.bounds.width * 0.9, tileSize: 80, tileSpacing: 6)
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureDelegates()
         configureUI()
         layoutUI()
         printTiles()
+    }
+    
+    private func configureDelegates() {
+        game.scoreDelegate = self 
     }
     
     private func configureUI() {
@@ -39,9 +46,15 @@ final class MainViewController: UIViewController {
 
     private func layoutUI() {
         view.backgroundColor = .systemBackground
-        
+        view.addSubview(scoresView)
+        scoresView.snp.makeConstraints {
+            $0.left.right.equalToSuperview().inset(16)
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+        }
         view.addSubview(gameView)
         gameView.center = view.center
+        
+        scoresView.updateCurrentScore()
     }
     
     @objc private func gameViewDidSwipe(sender: UISwipeGestureRecognizer) {
@@ -74,3 +87,18 @@ final class MainViewController: UIViewController {
     }
 }
 
+extension MainViewController: ScoreViewDataSource {
+    func currentScore(_ scoreView: ScoreView) -> Int {
+        return game.score
+    }
+    
+    func currentScoreViewTitle(_ scoreView: ScoreView) -> String {
+        return "score"
+    }
+}
+
+extension MainViewController: ScoreDelegate {
+    func scoreDidUpdate(_ score: Int) {
+        scoresView.updateCurrentScore()
+    }
+}

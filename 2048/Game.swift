@@ -15,15 +15,25 @@ protocol GameDelegate: AnyObject {
     func randomTilePlaced(at position: Position, tile: TileModel)
 }
 
+protocol ScoreDelegate: AnyObject {
+    func scoreDidUpdate(_ score: Int)
+}
 
 class Game {
     weak var delegate: GameDelegate?
+    weak var scoreDelegate: ScoreDelegate?
     
     let numberOfRows: Int
     let numberOfColumns: Int
     
     private var movingDirection: MovingDirection = .left
     private var tilesHaveMovedOrMerged = false
+    private var scoreDidUpdate = false
+    private(set) var score = 0 {
+        didSet {
+            scoreDidUpdate = true
+        }
+    }
     
     var tiles: [[TileModel?]]
     
@@ -50,6 +60,7 @@ class Game {
     func move(_ direction: MovingDirection) {
         movingDirection = direction
         tilesHaveMovedOrMerged = false
+        scoreDidUpdate = false
         
         switch direction {
         case .left:
@@ -62,8 +73,13 @@ class Game {
             moveDown()
         }
         resetTiles()
+        
         if tilesHaveMovedOrMerged {
             placeRandomTile()
+        }
+        
+        if scoreDidUpdate {
+            scoreDelegate?.scoreDidUpdate(score)
         }
     }
     
@@ -109,20 +125,22 @@ class Game {
                 }
                 
                 guard newJ > 0 && tile == tiles[i][newJ - 1] && !(tiles[i][newJ - 1]!.hasMerged) else {
-                    // Move tile if nothing nearby is mergabld
+                    // Move tile if nothing on the way to merge
                     tiles[i][j] = nil
                     tiles[i][newJ] = tile
                     if tilesHaveMovedOrMerged == false {
                         tilesHaveMovedOrMerged = j != newJ
                     }
-                    delegate?.tileHasMoved(from: calculateCorrectIndicies(i, j), to: calculateCorrectIndicies(i, newJ))
+                    
+                    if tilesHaveMovedOrMerged {
+                        delegate?.tileHasMoved(from: calculateCorrectIndicies(i, j), to: calculateCorrectIndicies(i, newJ))
+                    }
                     continue
                 }
                 
-                let tileToMergeInto = tiles[i][newJ - 1]!
+                let tileToMergeInto = tiles[i][newJ - 1]! // safe force unwrap due to previous conditions
                 
                 var newTile = tile.merged(into: tileToMergeInto)
-                
                 
                 tiles[i][j] = nil
                 tiles[i][newJ - 1] = newTile
@@ -135,6 +153,7 @@ class Game {
                     position: calculateCorrectIndicies(for: newTile.position),
                     hasMerged: newTile.hasMerged
                 )
+                score += newTile.value
                 delegate?.tileHasMerged(
                     from: calculateCorrectIndicies(i, j),
                     into: calculateCorrectIndicies(i, newJ - 1),

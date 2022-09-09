@@ -14,8 +14,7 @@ final class TileView: UIView {
     
     private let numberLabel: UILabel = {
         let label = UILabel()
-        let font = UIFont(name: "LexendDeca-Bold", size: 40)
-        label.font = font
+        label.font = .lexendDeca(size: 45, .bold)
         label.textAlignment = .center
         label.adjustsFontSizeToFitWidth = true
         return label
