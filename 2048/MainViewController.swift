@@ -9,7 +9,10 @@ import SnapKit
 import CoreGraphics
 
 final class MainViewController: UIViewController {
-    private lazy var game = Game(numberOfRows: 4, numberOfColumns: 4)
+    var randomInteger: Int {
+        return Int.random(in: 1...8)
+    }
+    private lazy var game = Game(numberOfRows: randomInteger, numberOfColumns: randomInteger)
     
     private lazy var scoresView = ScoresContainerView(dataSource: self)
     
@@ -24,7 +27,7 @@ final class MainViewController: UIViewController {
     }
     
     private func configureDelegates() {
-        game.scoreDelegate = self 
+        game.stateDelegate = self
     }
     
     private func configureUI() {
@@ -97,8 +100,44 @@ extension MainViewController: ScoreViewDataSource {
     }
 }
 
-extension MainViewController: ScoreDelegate {
+extension MainViewController: GameStateDelegate {
     func scoreDidUpdate(_ score: Int) {
         scoresView.updateCurrentScore()
+    }
+    
+    func gameIsOver() {
+        let alertControl = UIAlertController(
+            title: "Game Over",
+            message: "You have scored \(game.score) points.",
+            preferredStyle: .alert
+        )
+        
+        let okAction = UIAlertAction(
+            title: "Try again",
+            style: .default,
+            handler: { _ in
+                self.gameView.removeFromSuperview()
+                self.game = Game(numberOfRows: self.randomInteger, numberOfColumns: self.randomInteger)
+                self.gameView = GameView(game: self.game, boardWidth: UIScreen.main.bounds.width * 0.9, tileSize: 80, tileSpacing: 6)
+                self.layoutUI()
+                self.configureUI()
+                self.configureDelegates()
+            }
+        )
+        
+        let crashGameAction = UIAlertAction(
+            title: "Crash a game",
+            style: .destructive,
+            handler: { _ in
+                fatalError()
+            }
+        )
+        
+        alertControl.addAction(okAction)
+        alertControl.addAction(crashGameAction)
+        
+        alertControl.preferredAction = okAction
+        
+        present(alertControl, animated: true)
     }
 }

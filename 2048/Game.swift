@@ -15,13 +15,31 @@ protocol GameDelegate: AnyObject {
     func randomTilePlaced(at position: Position, tile: TileModel)
 }
 
-protocol ScoreDelegate: AnyObject {
+protocol GameStateDelegate: AnyObject {
     func scoreDidUpdate(_ score: Int)
+    func gameIsOver()
 }
 
 class Game {
-    weak var delegate: GameDelegate?
-    weak var scoreDelegate: ScoreDelegate?
+    weak var gameDelegate: GameDelegate?
+    weak var stateDelegate: GameStateDelegate?
+    
+    var gameIsOver: Bool {
+        for tileRow in tiles {
+            if tileRow.filter({ $0 == nil }).isEmpty == false {
+                return false
+            }
+        }
+        
+        for i in tiles.indices {
+            for j in tiles[i].indices {
+                if hasEqualAdjacentTile(at: (i, j)) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
     
     let numberOfRows: Int
     let numberOfColumns: Int
@@ -79,7 +97,11 @@ class Game {
         }
         
         if scoreDidUpdate {
-            scoreDelegate?.scoreDidUpdate(score)
+            stateDelegate?.scoreDidUpdate(score)
+        }
+        
+        if gameIsOver {
+            stateDelegate?.gameIsOver()
         }
     }
     
@@ -133,7 +155,7 @@ class Game {
                     }
                     
                     if tilesHaveMovedOrMerged {
-                        delegate?.tileHasMoved(from: calculateCorrectIndicies(i, j), to: calculateCorrectIndicies(i, newJ))
+                        gameDelegate?.tileHasMoved(from: calculateCorrectIndicies(i, j), to: calculateCorrectIndicies(i, newJ))
                     }
                     continue
                 }
@@ -154,7 +176,7 @@ class Game {
                     hasMerged: newTile.hasMerged
                 )
                 score += newTile.value
-                delegate?.tileHasMerged(
+                gameDelegate?.tileHasMerged(
                     from: calculateCorrectIndicies(i, j),
                     into: calculateCorrectIndicies(i, newJ - 1),
                     tile: newTileWithCorrectCoordinates
@@ -177,7 +199,7 @@ class Game {
         let newTile = TileModel(power: power, position: randomPosition, hasMerged: false)
         tiles[randomPosition.i][randomPosition.j] = newTile
         
-        delegate?.randomTilePlaced(at: randomPosition, tile: newTile)
+        gameDelegate?.randomTilePlaced(at: randomPosition, tile: newTile)
     }
     
     private func getPowerOfRandomTile() -> Int {
@@ -199,11 +221,22 @@ extension Game {
         case down
     }
     
-    func calculateCorrectIndicies(for position: Position) -> Position {
+    private func hasEqualAdjacentTile(at position : Position) -> Bool {
+        let i = position.i
+        let j = position.j
+        guard let tile = tiles[i][j] else { return false }
+        
+        let hasEqualTileBelow: Bool = i + 1 < tiles.count && tiles[i + 1][j] == tile
+        let hasEqualTileOnRight: Bool = j + 1 < tiles[i].count && tiles[i][j + 1] == tile
+        
+        return hasEqualTileBelow || hasEqualTileOnRight
+    }
+    
+    private func calculateCorrectIndicies(for position: Position) -> Position {
         return calculateCorrectIndicies(position.i, position.j)
     }
     
-    func calculateCorrectIndicies(_ i: Int, _ j: Int) -> (i: Int, j: Int) {
+    private func calculateCorrectIndicies(_ i: Int, _ j: Int) -> (i: Int, j: Int) {
         switch movingDirection {
         case .left:
             return (i, j)

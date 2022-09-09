@@ -66,7 +66,7 @@ final class GameView: UIView {
     }
     
     private func configureUI() {
-        game.delegate = self
+        game.gameDelegate = self
         self.backgroundColor = .gameViewBackground
         self.layer.cornerRadius = cornerRadius
     }
