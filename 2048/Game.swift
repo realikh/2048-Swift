@@ -33,8 +33,8 @@ final class Game {
     
     private var emptyPositions: [Position] {
         var result: [Position] = []
-        for i in tiles.indices {
-            for j in tiles[i].indices {
+        tiles.indices.forEach { i in
+            tiles[i].indices.forEach { j in
                 if tiles[i][j] == nil {
                     result.append((i, j))
                 }
@@ -72,14 +72,15 @@ final class Game {
     }
     
     func start() {
-        if emptyPositions.count == numberOfRows * numberOfColumns {
+        guard emptyPositions.count != numberOfRows * numberOfColumns else  {
             placeRandomTile()
-        } else {
-            tiles.forEach {
-                $0.forEach  { tile in
-                    guard let tile = tile else { return }
-                    gameDelegate?.tilePlaced(at: tile.position, tile: tile)
-                }
+            return
+        }
+        
+        tiles.forEach { tileRow in
+            tileRow.forEach  { tile in
+                guard let tile = tile else { return }
+                gameDelegate?.tilePlaced(at: tile.position, tile: tile)
             }
         }
     }
