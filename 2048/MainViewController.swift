@@ -9,21 +9,18 @@ import SnapKit
 import CoreGraphics
 
 final class MainViewController: UIViewController {
-    var randomInteger: Int {
-        return Int.random(in: 1...8)
-    }
-    private lazy var game = Game(numberOfRows: randomInteger, numberOfColumns: randomInteger)
-    
     private lazy var scoresView = ScoresContainerView(dataSource: self)
     
-    private lazy var gameView = GameView(game: game, boardWidth: UIScreen.main.bounds.width * 0.9, tileSize: 80, tileSpacing: 6)
+    private var game = Game(numberOfRows: 4, numberOfColumns: 4)
+    
+    private lazy var gameView = GameBoardView(game: game)
 
     override func viewDidLoad() {
         super.viewDidLoad()
         configureDelegates()
         configureUI()
         layoutUI()
-        printTiles()
+        game.start()
     }
     
     private func configureDelegates() {
@@ -73,20 +70,6 @@ final class MainViewController: UIViewController {
         default:
             break
         }
-        
-        printTiles()
-    }
-    
-    private func printTiles() {
-        for tileRow in game.tiles {
-            var output = ""
-            for tile in tileRow {
-                let stringValue = tile == nil ? " " : "\(tile!.value)"
-                output += stringValue + "\t"
-            }
-            print(output)
-        }
-        print(String(repeating: "-", count: 16))
     }
 }
 
@@ -117,8 +100,8 @@ extension MainViewController: GameStateDelegate {
             style: .default,
             handler: { _ in
                 self.gameView.removeFromSuperview()
-                self.game = Game(numberOfRows: self.randomInteger, numberOfColumns: self.randomInteger)
-                self.gameView = GameView(game: self.game, boardWidth: UIScreen.main.bounds.width * 0.9, tileSize: 80, tileSpacing: 6)
+                self.game = Game(numberOfRows: 4, numberOfColumns: 4)
+                self.gameView = GameBoardView(game: self.game, boardWidth: UIScreen.main.bounds.width * 0.9, tileSize: 80, tileSpacing: 6)
                 self.layoutUI()
                 self.configureUI()
                 self.configureDelegates()

@@ -9,36 +9,14 @@ import Foundation
 
 typealias Position = (i: Int, j: Int)
 
-protocol GameDelegate: AnyObject {
-    func tileHasMerged(from startPoint: Position, into endPoint: Position, tile: TileModel)
-    func tileHasMoved(from startPoint: Position, to endPoint: Position)
-    func randomTilePlaced(at position: Position, tile: TileModel)
-}
-
-protocol GameStateDelegate: AnyObject {
-    func scoreDidUpdate(_ score: Int)
-    func gameIsOver()
-}
-
-class Game {
+final class Game {
+    private var tiles: [[TileModel?]]
+    
     weak var gameDelegate: GameDelegate?
     weak var stateDelegate: GameStateDelegate?
     
-    var gameIsOver: Bool {
-        for tileRow in tiles {
-            if tileRow.filter({ $0 == nil }).isEmpty == false {
-                return false
-            }
-        }
-        
-        for i in tiles.indices {
-            for j in tiles[i].indices {
-                if hasEqualAdjacentTile(at: (i, j)) {
-                    return false
-                }
-            }
-        }
-        return true
+    var isOver: Bool {
+        return gameIsOver()
     }
     
     let numberOfRows: Int
@@ -52,8 +30,6 @@ class Game {
             scoreDidUpdate = true
         }
     }
-    
-    var tiles: [[TileModel?]]
     
     private var emptyPositions: [Position] {
         var result: [Position] = []
@@ -72,6 +48,9 @@ class Game {
         self.numberOfColumns = numberOfColumns
         
         self.tiles = Array(repeating: Array(repeating: nil, count: numberOfColumns), count: numberOfRows)
+    }
+    
+    func start() {
         placeRandomTile()
     }
     
@@ -90,6 +69,7 @@ class Game {
         case .down:
             moveDown()
         }
+        printTiles()
         resetTiles()
         
         if tilesHaveMovedOrMerged {
@@ -100,7 +80,7 @@ class Game {
             stateDelegate?.scoreDidUpdate(score)
         }
         
-        if gameIsOver {
+        if isOver {
             stateDelegate?.gameIsOver()
         }
     }
@@ -211,6 +191,24 @@ class Game {
     private func getRandomPosition() -> Position? {
         return emptyPositions.randomElement()
     }
+    
+    private func gameIsOver() -> Bool {
+        // Game is not over if there's any empty tile
+        for tileRow in tiles {
+            if tileRow.filter({ $0 == nil }).isEmpty == false {
+                return false
+            }
+        }
+        // Game is not over if there are some tiles to merge
+        for i in tiles.indices {
+            for j in tiles[i].indices {
+                if hasEqualAdjacentTile(at: (i, j)) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
 }
 
 extension Game {
@@ -256,7 +254,19 @@ extension Game {
 }
 
 
-
+extension Game {
+    private func printTiles() {
+        for tileRow in tiles {
+            var output = ""
+            for tile in tileRow {
+                let stringValue = tile == nil ? " " : "\(tile!.value)"
+                output += stringValue + "\t"
+            }
+            print(output)
+        }
+        print(String(repeating: "-", count: 16))
+    }
+}
 //    lazy var testingTiles: [[TileModel?]] = {
 //        let tileNumbers = satisfyingTiles
 //        var tileModels: [[TileModel?]] = Array(repeating: Array(repeating: nil, count: numberOfColumns), count: numberOfRows)

@@ -8,7 +8,7 @@
 import SnapKit
 import UIKit
 
-final class GameView: UIView {
+final class GameBoardView: UIView {
     private let game: Game
     private let boardWidth: CGFloat
     private let tileSide: CGFloat
@@ -29,7 +29,13 @@ final class GameView: UIView {
         return self.subviews.compactMap({ $0 as? TileView })
     }
     
-    init(game: Game, boardWidth: CGFloat, tileSize: CGFloat = 50, tileSpacing: CGFloat? = nil, cornerRadius: CGFloat? = nil) {
+    init(
+        game: Game,
+        boardWidth: CGFloat = UIScreen.main.bounds.width * 0.9,
+        tileSize: CGFloat = 80,
+        tileSpacing: CGFloat? = 6,
+        cornerRadius: CGFloat? = nil
+    ) {
         self.game = game
         
         let maximumTileSize = boardWidth / CGFloat(game.numberOfColumns)
@@ -80,8 +86,6 @@ final class GameView: UIView {
                 self.addSubview(emptyTile)
             }
         }
-        
-        fill()
     }
     
     private func calculateTileFrame(for position: Position) -> CGRect {
@@ -95,22 +99,9 @@ final class GameView: UIView {
         
         return CGRect(origin: CGPoint(x: x, y: y), size: size)
     }
-    
-    func fill() {
-        for i in 0..<game.tiles.count {
-            for j in 0..<game.tiles[i].count {
-                guard let tile = game.tiles[i][j] else { continue }
-                let tileView = TileView(tileModel: tile)
-                tileView.layer.cornerRadius = cornerRadius
-                tileView.position = (i,j)
-                tileView.frame = calculateTileFrame(i, j)
-                addSubview(tileView)
-            }
-        }
-    }
 }
 
-extension GameView: GameDelegate {
+extension GameBoardView: GameDelegate {
     func tileHasMoved(from startPoint: Position, to endPoint: Position) {
         animateMoving(from: startPoint, to: endPoint)
     }
@@ -243,7 +234,7 @@ extension GameView: GameDelegate {
     }
 }
 
-extension GameView {
+extension GameBoardView {
     enum Constants {
         static let animationDuration: Double = 0.2
         static let tileScale: CGFloat = 1.4
