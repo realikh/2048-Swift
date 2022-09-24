@@ -61,7 +61,7 @@ final class Game {
         
         self.tiles = Array(repeating: Array(repeating: nil, count: numberOfColumns), count: numberOfRows)
         
-        traverseTiles { i, j in 
+        traverseTiles { i, j in
             let tile = TileModel(power: tileNumbers[i][j], position: (i, j))
             tiles[i][j] = tile
         }
@@ -119,7 +119,7 @@ final class Game {
     private func moveUp() {
         tiles.transpose()
         tiles.reverse()
-        shiftAndMerge()
+        moveLeft()
         tiles.reverse()
         tiles.transpose()
     }
@@ -127,11 +127,7 @@ final class Game {
     private func moveRight() {
         tiles.transpose()
         tiles.reverse()
-        tiles.transpose()
-        tiles.reverse()
-        shiftAndMerge()
-        tiles.reverse()
-        tiles.transpose()
+        moveUp()
         tiles.reverse()
         tiles.transpose()
     }
@@ -142,6 +138,14 @@ final class Game {
         shiftAndMerge()
         tiles.transpose()
         tiles.reverse()
+    }
+    
+    private func traverseTiles(handler: (Int, Int) -> Void) {
+        tiles.indices.forEach { i in
+            tiles[i].indices.forEach { j in
+                handler(i, j)
+            }
+        }
     }
     
     private func shiftAndMerge() {
@@ -187,14 +191,6 @@ final class Game {
                 into: calculateCorrectIndicies(i, newJ - 1),
                 tile: newTileWithCorrectCoordinates
             )
-        }
-    }
-    
-    private func traverseTiles(handler: (Int, Int) -> Void) {
-        tiles.indices.forEach { i in
-            tiles[i].indices.forEach { j in
-                handler(i, j)
-            }
         }
     }
     
