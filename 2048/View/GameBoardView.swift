@@ -23,8 +23,6 @@ final class GameBoardView: UIView {
     private var tileSpacing: CGFloat
     private let cornerRadius: CGFloat
     
-    
-    
     private var tileViews: [TileView] {
         return self.subviews.compactMap({ $0 as? TileView })
     }
@@ -59,8 +57,6 @@ final class GameBoardView: UIView {
         self.cornerRadius = cornerRadius ?? self.tileSide * 0.2
         super.init(frame: .zero)
 
-        
-        
         let frame = CGRect(x: 0, y: 0, width: self.boardWidth, height: boardHeight)
         self.frame = frame
         configureUI()
@@ -110,7 +106,7 @@ extension GameBoardView: GameDelegate {
         animateMerging(from: startPoint, into: endPoint, tile: tile)
     }
     
-    func randomTilePlaced(at position: Position, tile: TileModel) {
+    func tilePlaced(at position: Position, tile: TileModel) {
         animateAppearance(at: position, tile: tile)
     }
     

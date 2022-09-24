@@ -50,8 +50,38 @@ final class Game {
         self.tiles = Array(repeating: Array(repeating: nil, count: numberOfColumns), count: numberOfRows)
     }
     
+    init?(tileNumbers: [[Int?]]) {
+        let rowNumberCount = Set(tileNumbers.map { $0.count })
+        guard rowNumberCount.count == 1,
+        let numberOfColumns = rowNumberCount.first,
+            numberOfColumns >= 1 else {
+                return nil
+            }
+        
+        self.numberOfRows = tileNumbers.count
+        self.numberOfColumns = numberOfColumns
+        
+        self.tiles = Array(repeating: Array(repeating: nil, count: numberOfColumns), count: numberOfRows)
+        
+        for i in tileNumbers.indices {
+            for j in tileNumbers[i].indices {
+                let tile = TileModel(power: tileNumbers[i][j], position: (i, j))
+                tiles[i][j] = tile
+            }
+        }
+    }
+    
     func start() {
-        placeRandomTile()
+        if emptyPositions.count == numberOfRows * numberOfColumns {
+            placeRandomTile()
+        } else {
+            tiles.forEach {
+                $0.forEach  { tile in
+                    guard let tile = tile else { return }
+                    gameDelegate?.tilePlaced(at: tile.position, tile: tile)
+                }
+            }
+        }
     }
     
     func move(_ direction: MovingDirection) {
@@ -92,7 +122,7 @@ final class Game {
     private func moveUp() {
         tiles.transpose()
         tiles.reverse()
-        moveLeft()
+        shiftAndMerge()
         tiles.reverse()
         tiles.transpose()
     }
@@ -102,7 +132,7 @@ final class Game {
         tiles.reverse()
         tiles.transpose()
         tiles.reverse()
-        moveLeft()
+        shiftAndMerge()
         tiles.reverse()
         tiles.transpose()
         tiles.reverse()
@@ -112,7 +142,7 @@ final class Game {
     private func moveDown() {
         tiles.reverse()
         tiles.transpose()
-        moveLeft()
+        shiftAndMerge()
         tiles.transpose()
         tiles.reverse()
     }
@@ -177,9 +207,13 @@ final class Game {
         guard let randomPosition = getRandomPosition() else { return }
         let power = getPowerOfRandomTile()
         let newTile = TileModel(power: power, position: randomPosition, hasMerged: false)
-        tiles[randomPosition.i][randomPosition.j] = newTile
-        
-        gameDelegate?.randomTilePlaced(at: randomPosition, tile: newTile)
+
+        place(newTile, at: randomPosition)
+    }
+    
+    private func place(_ tile: TileModel, at position: Position) {
+        tiles[position.i][position.j] = tile
+        gameDelegate?.tilePlaced(at: position, tile: tile)
     }
     
     private func getPowerOfRandomTile() -> Int {

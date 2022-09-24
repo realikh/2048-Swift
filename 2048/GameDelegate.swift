@@ -10,5 +10,5 @@ import Foundation
 protocol GameDelegate: AnyObject {
     func tileHasMerged(from startPoint: Position, into endPoint: Position, tile: TileModel)
     func tileHasMoved(from startPoint: Position, to endPoint: Position)
-    func randomTilePlaced(at position: Position, tile: TileModel)
+    func tilePlaced(at position: Position, tile: TileModel)
 }
