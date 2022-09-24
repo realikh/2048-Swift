@@ -133,7 +133,6 @@ extension GameBoardView: GameDelegate {
         into endPoint: Position,
         tile: TileModel
     ) {
-        print("Merging called")
         guard let tileToMerge = getTile(at: startPoint) else { print("❌ NO TILE TO MERGE AT \(startPoint)"); return }
         guard let tileToMergeInto = getTile(at: endPoint) else { print("❌ NO TILE TO MERGE INTOAT \(endPoint)"); return }
         

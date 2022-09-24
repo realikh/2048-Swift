@@ -96,7 +96,6 @@ final class Game {
         case .down:
             moveDown()
         }
-        printTiles()
         resetTiles()
         
         if tilesHaveMovedOrMerged {
@@ -110,39 +109,36 @@ final class Game {
         if isOver {
             stateDelegate?.gameIsOver()
         }
+        printTiles()
     }
     
     private func moveLeft() {
-        shiftAndMerge()
+        shiftThenMergeLeft()
     }
     
     private func moveUp() {
-        tiles.transpose()
-        tiles.reverse()
-        moveLeft()
-        tiles.reverse()
-        tiles.transpose()
+        shiftThenMergeUp()
     }
     
     private func moveRight() {
-        tiles.transpose()
-        tiles.reverse()
-        moveUp()
-        tiles.reverse()
-        tiles.transpose()
+        shiftThenMergeRight()
     }
     
     private func moveDown() {
-        tiles.reverse()
-        tiles.transpose()
-        shiftAndMerge()
-        tiles.transpose()
-        tiles.reverse()
+        shiftThenMergeDown()
     }
     
     private func traverseTiles(handler: (Int, Int) -> Void) {
         tiles.indices.forEach { i in
             tiles[i].indices.forEach { j in
+                handler(i, j)
+            }
+        }
+    }
+    
+    private func traverseTilesColumnsRows(handler: (Int, Int) -> Void) {
+        for j in 0..<numberOfColumns {
+            for i in 0..<numberOfRows {
                 handler(i, j)
             }
         }
@@ -190,6 +186,172 @@ final class Game {
                 from: calculateCorrectIndicies(i, j),
                 into: calculateCorrectIndicies(i, newJ - 1),
                 tile: newTileWithCorrectCoordinates
+            )
+        }
+    }
+    
+    private func shiftThenMergeLeft() {
+        traverseTiles { i, j in
+            guard let tile = tiles[i][j] else { return }
+            var newJ = j
+            while newJ > 0 && tiles[i][newJ - 1] == nil {
+                newJ -= 1
+            }
+            
+            guard newJ > 0 && tile == tiles[i][newJ - 1] && !(tiles[i][newJ - 1]!.hasMerged) else {
+                // Move tile if nothing on the way to merge
+                tiles[i][j] = nil
+                tiles[i][newJ] = tile
+                if tilesHaveMovedOrMerged == false {
+                    tilesHaveMovedOrMerged = j != newJ
+                }
+                
+                if tilesHaveMovedOrMerged {
+                    gameDelegate?.tileHasMoved(from: (i, j), to: (i, newJ))
+                }
+                return
+            }
+            
+            let tileToMergeInto = tiles[i][newJ - 1]! // safe force unwrap due to previous conditions
+            
+            var newTile = tile.merged(into: tileToMergeInto)
+            
+            tiles[i][j] = nil
+            tiles[i][newJ - 1] = newTile
+            
+            newTile.position = (i, newJ - 1)
+            tilesHaveMovedOrMerged = true
+            
+            score += newTile.value
+            gameDelegate?.tileHasMerged(
+                from: (i, j),
+                into: (i, newJ - 1),
+                tile: newTile
+            )
+        }
+    }
+    
+    private func shiftThenMergeUp() {
+        traverseTiles { i, j in
+            guard let tile = tiles[i][j] else { return }
+            var newI = i
+            while newI > 0 && tiles[newI - 1][j] == nil {
+                newI -= 1
+            }
+            
+            guard newI > 0 && tile == tiles[newI - 1][j] && !(tiles[newI - 1][j]!.hasMerged) else {
+                // Move tile if nothing on the way to merge
+                tiles[i][j] = nil
+                tiles[newI][j] = tile
+                if tilesHaveMovedOrMerged == false {
+                    tilesHaveMovedOrMerged = i != newI
+                }
+                
+                if tilesHaveMovedOrMerged {
+                    gameDelegate?.tileHasMoved(from: (i, j), to: (newI, j))
+                }
+                return
+            }
+            
+            let tileToMergeInto = tiles[newI - 1][j]! // safe force unwrap due to previous conditions
+            
+            var newTile = tile.merged(into: tileToMergeInto)
+            
+            tiles[i][j] = nil
+            tiles[newI - 1][j] = newTile
+            
+            newTile.position = (newI - 1, j)
+            tilesHaveMovedOrMerged = true
+            
+            score += newTile.value
+            gameDelegate?.tileHasMerged(
+                from: (i, j),
+                into: (newI - 1, j),
+                tile: newTile
+            )
+        }
+    }
+    
+    private func shiftThenMergeRight() {
+        traverseTiles { i, inOrderJ in
+            let j = numberOfColumns - inOrderJ - 1
+            guard let tile = tiles[i][j] else { return }
+            var newJ = j
+            while newJ < numberOfColumns - 1 && tiles[i][newJ + 1] == nil {
+                newJ += 1
+            }
+            
+            guard newJ < numberOfColumns - 1 && tile == tiles[i][newJ + 1] && !(tiles[i][newJ + 1]!.hasMerged) else {
+                // Move tile if nothing on the way to merge
+                tiles[i][j] = nil
+                tiles[i][newJ] = tile
+                if tilesHaveMovedOrMerged == false {
+                    tilesHaveMovedOrMerged = j != newJ
+                }
+                
+                if tilesHaveMovedOrMerged {
+                    gameDelegate?.tileHasMoved(from: (i, j), to: (i, newJ))
+                }
+                return
+            }
+            
+            let tileToMergeInto = tiles[i][newJ + 1]! // safe force unwrap due to previous conditions
+            
+            var newTile = tile.merged(into: tileToMergeInto)
+            
+            tiles[i][j] = nil
+            tiles[i][newJ + 1] = newTile
+            
+            newTile.position = (i, newJ + 1)
+            tilesHaveMovedOrMerged = true
+            
+            score += newTile.value
+            gameDelegate?.tileHasMerged(
+                from: (i, j),
+                into: (i, newJ + 1),
+                tile: newTile
+            )
+        }
+    }
+    
+    private func shiftThenMergeDown() {
+        traverseTiles { inOrderI, j in
+            let i = numberOfRows - inOrderI - 1
+            guard let tile = tiles[i][j] else { return }
+            var newI = i
+            while newI < numberOfRows - 1 && tiles[newI + 1][j] == nil {
+                newI += 1
+            }
+            
+            guard newI < numberOfRows - 1 && tile == tiles[newI + 1][j] && !(tiles[newI + 1][j]!.hasMerged) else {
+                // Move tile if nothing on the way to merge
+                tiles[i][j] = nil
+                tiles[newI][j] = tile
+                if tilesHaveMovedOrMerged == false {
+                    tilesHaveMovedOrMerged = i != newI
+                }
+                
+                if tilesHaveMovedOrMerged {
+                    gameDelegate?.tileHasMoved(from: (i, j), to: (newI, j))
+                }
+                return
+            }
+            
+            let tileToMergeInto = tiles[newI + 1][j]! // safe force unwrap due to previous conditions
+            
+            var newTile = tile.merged(into: tileToMergeInto)
+            
+            tiles[i][j] = nil
+            tiles[newI + 1][j] = newTile
+            
+            newTile.position = (newI + 1, j)
+            tilesHaveMovedOrMerged = true
+            
+            score += newTile.value
+            gameDelegate?.tileHasMerged(
+                from: (i, j),
+                into: (newI + 1, j),
+                tile: newTile
             )
         }
     }
@@ -272,6 +434,15 @@ extension Game {
             return (tiles[i].count - j - 1, i)
         }
     }
+    
+//    private func calculateTransposedIndices(_ i: Int, j: Int) -> (i: Int, j: Int) {
+//        switch movingDirection {
+//        case .left:
+//            return (i, j)
+//        case .up:
+//            return (j, )
+//        }
+//    }
     
     enum Constants {
         static let initialValue: Int = 2

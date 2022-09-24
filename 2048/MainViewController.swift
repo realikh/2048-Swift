@@ -11,17 +11,17 @@ import CoreGraphics
 final class MainViewController: UIViewController {
     private lazy var scoresView = ScoresContainerView(dataSource: self)
     
-//    private var game = Game(numberOfRows: 4, numberOfColumns: 4)
+    private var game = Game(numberOfRows: 4, numberOfColumns: 4)
     
-    private var game = Game(
-        tileNumbers: [
-            [4],
-            [4],
-            [4],
-            [4],
-            [4],
-        ]
-    )!
+//    private var game = Game(
+//        tileNumbers: [
+//            [4],
+//            [4],
+//            [4],
+//            [4],
+//            [4],
+//        ]
+//    )!
     
     private lazy var gameView = GameBoardView(game: game)
 
