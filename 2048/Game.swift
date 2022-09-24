@@ -104,22 +104,6 @@ final class Game {
         printTiles()
     }
     
-    private func moveLeft() {
-        shiftAndMergeAlongJ(inOrder: true)
-    }
-    
-    private func moveUp() {
-        shiftAndMergeAlongI(inOrder: true)
-    }
-    
-    private func moveRight() {
-        shiftAndMergeAlongJ(inOrder: false)
-    }
-    
-    private func moveDown() {
-        shiftAndMergeAlongI(inOrder: false)
-    }
-    
     private func traverseTiles(handler: (Int, Int) -> Void) {
         tiles.indices.forEach { i in
             tiles[i].indices.forEach { j in
