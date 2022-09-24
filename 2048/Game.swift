@@ -86,16 +86,8 @@ final class Game {
         tilesHaveMovedOrMerged = false
         scoreDidUpdate = false
         
-        switch direction {
-        case .left:
-            moveLeft()
-        case .up:
-            moveUp()
-        case .right:
-            moveRight()
-        case .down:
-            moveDown()
-        }
+        shiftAndMerge(direction: direction)
+        
         resetTiles()
         
         if tilesHaveMovedOrMerged {
@@ -144,100 +136,73 @@ final class Game {
         }
     }
     
-    private func shiftAndMergeAlongJ(inOrder: Bool) {
+    private func shiftAndMerge(direction: MovingDirection) {
+        let inOrder = direction == .left || direction == .up
+        let movesAlongJ = direction == .left || direction == .right
+        let movesAlongI = !movesAlongJ
         let comparisonMultiplier = inOrder ? 1 : -1
-        let valueToCompareWith = (inOrder ? 0 : numberOfColumns - 1) * comparisonMultiplier
+        let valueToCompareWith = (inOrder ? 0 : (movesAlongJ ? numberOfColumns : numberOfRows) - 1) * comparisonMultiplier
         
-        traverseTiles { i, inOrderJ in
+        traverseTiles { inOrderI, inOrderJ in
+            let i = inOrder ? inOrderI : numberOfRows - inOrderI - 1
             let j = inOrder ? inOrderJ : numberOfColumns - inOrderJ - 1
             guard let tile = tiles[i][j] else { return }
-            var newJ = j
-            while newJ * comparisonMultiplier > valueToCompareWith && tiles[i][newJ - 1 * comparisonMultiplier] == nil {
-                newJ -= 1 * comparisonMultiplier
-            }
             
-            guard newJ * comparisonMultiplier > valueToCompareWith
-                    && tile == tiles[i][newJ - 1 * comparisonMultiplier] &&
-                    !(tiles[i][newJ - 1 * comparisonMultiplier]!.hasMerged) else {
-                // Move tile if nothing on the way to merge
-                tiles[i][j] = nil
-                tiles[i][newJ] = tile
-                if tilesHaveMovedOrMerged == false {
-                    tilesHaveMovedOrMerged = j != newJ
-                }
-                
-                if tilesHaveMovedOrMerged {
-                    gameDelegate?.tileHasMoved(from: (i, j), to: (i, newJ))
-                }
-                return
-            }
-            
-            newJ = newJ - 1 * comparisonMultiplier
-            
-            let tileToMergeInto = tiles[i][newJ]! // safe force unwrap due to previous conditions
-            
-            var newTile = tile.merged(into: tileToMergeInto)
-            
-            tiles[i][j] = nil
-            tiles[i][newJ] = newTile
-            
-            newTile.position = (i, newJ)
-            tilesHaveMovedOrMerged = true
-            
-            score += newTile.value
-            gameDelegate?.tileHasMerged(
-                from: (i, j),
-                into: (i, newJ),
-                tile: newTile
-            )
-        }
-    }
-    
-    private func shiftAndMergeAlongI(inOrder: Bool) {
-        let comparisonMultiplier = inOrder ? 1 : -1
-        let valueToCompareWith = (inOrder ? 0 : numberOfRows - 1) * comparisonMultiplier
-        
-        traverseTiles { inOrderI, j in
-            let i = inOrder ? inOrderI : numberOfRows - inOrderI - 1
-            guard let tile = tiles[i][j] else { return }
             var newI = i
-            while newI * comparisonMultiplier > valueToCompareWith &&
+            var newJ = j
+            
+            while movesAlongI && newI * comparisonMultiplier > valueToCompareWith &&
                     tiles[newI - 1 * comparisonMultiplier][j] == nil {
                 newI -= 1 * comparisonMultiplier
             }
             
-            guard newI * comparisonMultiplier > valueToCompareWith
+            while movesAlongJ && newJ * comparisonMultiplier > valueToCompareWith &&
+                    tiles[i][newJ - 1 * comparisonMultiplier] == nil {
+                newJ -= 1 * comparisonMultiplier
+            }
+            
+            
+            
+            guard (movesAlongJ && newJ * comparisonMultiplier > valueToCompareWith
+                   && tile == tiles[i][newJ - 1 * comparisonMultiplier] &&
+                   !(tiles[i][newJ - 1 * comparisonMultiplier]!.hasMerged)
+                   ||
+                   (movesAlongI && newI * comparisonMultiplier > valueToCompareWith
                     && tile == tiles[newI - 1 * comparisonMultiplier][j] &&
-                    !(tiles[newI - 1 * comparisonMultiplier][j]!.hasMerged) else {
+                    !(tiles[newI - 1 * comparisonMultiplier][j]!.hasMerged))
+                   ) else {
                 // Move tile if nothing on the way to merge
                 tiles[i][j] = nil
-                tiles[newI][j] = tile
+                tiles[newI][newJ] = tile
                 if tilesHaveMovedOrMerged == false {
-                    tilesHaveMovedOrMerged = i != newI
+                    tilesHaveMovedOrMerged = j != newJ || i != newI
                 }
                 
                 if tilesHaveMovedOrMerged {
-                    gameDelegate?.tileHasMoved(from: (i, j), to: (newI, j))
+                    gameDelegate?.tileHasMoved(from: (i, j), to: (newI, newJ))
                 }
                 return
             }
+            if movesAlongI {
+                newI = newI - 1 * comparisonMultiplier
+            } else {
+                newJ = newJ - 1 * comparisonMultiplier
+            }
             
-            newI = newI - 1 * comparisonMultiplier
-            
-            let tileToMergeInto = tiles[newI][j]! // safe force unwrap due to previous conditions
+            let tileToMergeInto = tiles[newI][newJ]! // safe force unwrap due to previous conditions
             
             var newTile = tile.merged(into: tileToMergeInto)
             
             tiles[i][j] = nil
-            tiles[newI][j] = newTile
+            tiles[newI][newJ] = newTile
             
-            newTile.position = (newI, j)
+            newTile.position = (newI, newJ)
             tilesHaveMovedOrMerged = true
             
             score += newTile.value
             gameDelegate?.tileHasMerged(
                 from: (i, j),
-                into: (newI, j),
+                into: (newI, newJ),
                 tile: newTile
             )
         }
