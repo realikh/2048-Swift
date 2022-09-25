@@ -42,7 +42,7 @@ extension UIColor {
     }
     
     static var powerOf7Color: UIColor {
-        UIColor(hex: "#00ff00")
+        UIColor(hex: "#55dd22")
     }
     
     static var powerOf8Color: UIColor {

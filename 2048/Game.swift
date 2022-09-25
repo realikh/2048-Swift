@@ -135,8 +135,6 @@ final class Game {
                 newJ -= 1 * comparisonMultiplier
             }
             
-            
-            
             guard (movesAlongJ && newJ * comparisonMultiplier > valueToCompareWith
                    && tile == tiles[i][newJ - 1 * comparisonMultiplier] &&
                    !(tiles[i][newJ - 1 * comparisonMultiplier]!.hasMerged)
@@ -157,6 +155,7 @@ final class Game {
                 }
                 return
             }
+            
             if movesAlongI {
                 newI = newI - 1 * comparisonMultiplier
             } else {
