@@ -30,10 +30,21 @@
 		77700C6128DF17F800F9A980 /* LexendDeca-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 77700C5828DF17F800F9A980 /* LexendDeca-SemiBold.ttf */; };
 		77BB10A828DF1D0000FCC5DA /* GameDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BB10A728DF1D0000FCC5DA /* GameDelegate.swift */; };
 		77BB10AA28DF1D1500FCC5DA /* GameStateDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BB10A928DF1D1500FCC5DA /* GameStateDelegate.swift */; };
+		77BB10D328E0492F00FCC5DA /* 2048Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BB10D228E0492F00FCC5DA /* 2048Tests.swift */; };
 		77FC3AFD28C53543004B6FF9 /* ArrayExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77FC3AFC28C53542004B6FF9 /* ArrayExtension.swift */; };
 		77FC3AFF28C54F44004B6FF9 /* TileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77FC3AFE28C54F44004B6FF9 /* TileView.swift */; };
 		9BE21FD2999B8866545383F5 /* Pods_2048.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F02159EAB8AF08107289C511 /* Pods_2048.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		77BB10CD28E048F800FCC5DA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 773EF90228BE4F6F0037D960 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 773EF90928BE4F6F0037D960;
+			remoteInfo = 2048;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		773EF90A28BE4F6F0037D960 /* 2048.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 2048.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -61,6 +72,8 @@
 		77700C5828DF17F800F9A980 /* LexendDeca-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LexendDeca-SemiBold.ttf"; sourceTree = "<group>"; };
 		77BB10A728DF1D0000FCC5DA /* GameDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDelegate.swift; sourceTree = "<group>"; };
 		77BB10A928DF1D1500FCC5DA /* GameStateDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameStateDelegate.swift; path = ../../../Documents/GameStateDelegate.swift; sourceTree = "<group>"; };
+		77BB10C928E048F800FCC5DA /* 2048Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = 2048Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		77BB10D228E0492F00FCC5DA /* 2048Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 2048Tests.swift; sourceTree = "<group>"; };
 		77FC3AFC28C53542004B6FF9 /* ArrayExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayExtension.swift; sourceTree = "<group>"; };
 		77FC3AFE28C54F44004B6FF9 /* TileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileView.swift; sourceTree = "<group>"; };
 		7AD8B96BC86A4CF97C2A6896 /* Pods-2048.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-2048.debug.xcconfig"; path = "Target Support Files/Pods-2048/Pods-2048.debug.xcconfig"; sourceTree = "<group>"; };
@@ -74,6 +87,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				9BE21FD2999B8866545383F5 /* Pods_2048.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		77BB10C628E048F800FCC5DA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				773EF90C28BE4F6F0037D960 /* 2048 */,
+				77BB10CA28E048F800FCC5DA /* 2048Tests */,
 				773EF90B28BE4F6F0037D960 /* Products */,
 				4D847667CBACC9B516CD3026 /* Pods */,
 				76337BD9E34BED014B06DB95 /* Frameworks */,
@@ -137,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				773EF90A28BE4F6F0037D960 /* 2048.app */,
+				77BB10C928E048F800FCC5DA /* 2048Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -196,6 +218,14 @@
 			path = Application;
 			sourceTree = "<group>";
 		};
+		77BB10CA28E048F800FCC5DA /* 2048Tests */ = {
+			isa = PBXGroup;
+			children = (
+				77BB10D228E0492F00FCC5DA /* 2048Tests.swift */,
+			);
+			path = 2048Tests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -218,6 +248,24 @@
 			productReference = 773EF90A28BE4F6F0037D960 /* 2048.app */;
 			productType = "com.apple.product-type.application";
 		};
+		77BB10C828E048F800FCC5DA /* 2048Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 77BB10D128E048F800FCC5DA /* Build configuration list for PBXNativeTarget "2048Tests" */;
+			buildPhases = (
+				77BB10C528E048F800FCC5DA /* Sources */,
+				77BB10C628E048F800FCC5DA /* Frameworks */,
+				77BB10C728E048F800FCC5DA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				77BB10CE28E048F800FCC5DA /* PBXTargetDependency */,
+			);
+			name = 2048Tests;
+			productName = 2048Tests;
+			productReference = 77BB10C928E048F800FCC5DA /* 2048Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -230,6 +278,11 @@
 				TargetAttributes = {
 					773EF90928BE4F6F0037D960 = {
 						CreatedOnToolsVersion = 13.4.1;
+					};
+					77BB10C828E048F800FCC5DA = {
+						CreatedOnToolsVersion = 13.4.1;
+						LastSwiftMigration = 1340;
+						TestTargetID = 773EF90928BE4F6F0037D960;
 					};
 				};
 			};
@@ -247,6 +300,7 @@
 			projectRoot = "";
 			targets = (
 				773EF90928BE4F6F0037D960 /* 2048 */,
+				77BB10C828E048F800FCC5DA /* 2048Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -267,6 +321,13 @@
 				77700C5E28DF17F800F9A980 /* LexendDeca-Regular.ttf in Resources */,
 				77700C5A28DF17F800F9A980 /* LexendDeca-Black.ttf in Resources */,
 				77700C5F28DF17F800F9A980 /* LexendDeca-Bold.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		77BB10C728E048F800FCC5DA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -336,7 +397,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		77BB10C528E048F800FCC5DA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				77BB10D328E0492F00FCC5DA /* 2048Tests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		77BB10CE28E048F800FCC5DA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 773EF90928BE4F6F0037D960 /* 2048 */;
+			targetProxy = 77BB10CD28E048F800FCC5DA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		773EF91828BE4F720037D960 /* LaunchScreen.storyboard */ = {
@@ -520,6 +597,55 @@
 			};
 			name = Release;
 		};
+		77BB10CF28E048F800FCC5DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = AHA9MF4N57;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.realikh.-048Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/2048.app/2048";
+			};
+			name = Debug;
+		};
+		77BB10D028E048F800FCC5DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = AHA9MF4N57;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.realikh.-048Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/2048.app/2048";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -537,6 +663,15 @@
 			buildConfigurations = (
 				773EF91F28BE4F720037D960 /* Debug */,
 				773EF92028BE4F720037D960 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		77BB10D128E048F800FCC5DA /* Build configuration list for PBXNativeTarget "2048Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				77BB10CF28E048F800FCC5DA /* Debug */,
+				77BB10D028E048F800FCC5DA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

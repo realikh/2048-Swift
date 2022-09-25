@@ -8,6 +8,12 @@
 import SnapKit
 import CoreGraphics
 
+internal extension Game {
+    func testMove(direction: MovingDirection) {
+        
+    }
+}
+
 final class MainViewController: UIViewController {
     private lazy var scoresView = ScoresContainerView(dataSource: self)
     

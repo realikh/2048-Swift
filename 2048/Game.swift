@@ -10,19 +10,15 @@ import Foundation
 typealias Position = (i: Int, j: Int)
 
 final class Game {
-    private var tiles: [[TileModel?]]
-    
     weak var gameDelegate: GameDelegate?
     weak var stateDelegate: GameStateDelegate?
     
-    var isOver: Bool {
+    private var tiles: [[TileModel?]]
+    
+    private var isOver: Bool {
         return gameIsOver()
     }
     
-    let numberOfRows: Int
-    let numberOfColumns: Int
-    
-    private var movingDirection: MovingDirection = .left
     private var tilesHaveMovedOrMerged = false
     private var scoreDidUpdate = false
     private(set) var score = 0 {
@@ -33,13 +29,24 @@ final class Game {
     
     private var emptyPositions: [Position] {
         var result: [Position] = []
-        traverseTiles { i, j in
+        tiles.traverse2D { i, j in
             if tiles[i][j] == nil {
                 result.append((i, j))
             }
         }
         return result
     }
+    
+    var tileNumbers: [[Int?]] {
+        var result: [[Int?]] = []
+        tiles.forEach { tileRow in
+            result.append(tileRow.map { $0?.power })
+        }
+        return result
+    }
+    
+    let numberOfRows: Int
+    let numberOfColumns: Int
         
     init(numberOfRows: Int = 4, numberOfColumns: Int = 4) {
         self.numberOfRows = numberOfRows
@@ -61,7 +68,7 @@ final class Game {
         
         self.tiles = Array(repeating: Array(repeating: nil, count: numberOfColumns), count: numberOfRows)
         
-        traverseTiles { i, j in
+        tiles.traverse2D { i, j in
             let tile = TileModel(power: tileNumbers[i][j], position: (i, j))
             tiles[i][j] = tile
         }
@@ -82,17 +89,10 @@ final class Game {
     }
     
     func move(_ direction: MovingDirection) {
-        movingDirection = direction
         tilesHaveMovedOrMerged = false
         scoreDidUpdate = false
         
         shiftAndMerge(direction: direction)
-        
-        resetTiles()
-        
-        if tilesHaveMovedOrMerged {
-            placeRandomTile()
-        }
         
         if scoreDidUpdate {
             stateDelegate?.scoreDidUpdate(score)
@@ -101,33 +101,23 @@ final class Game {
         if isOver {
             stateDelegate?.gameIsOver()
         }
+        
+        if tilesHaveMovedOrMerged {
+            placeRandomTile()
+        }
+        
+        resetTiles()
         printTiles()
     }
-    
-    private func traverseTiles(handler: (Int, Int) -> Void) {
-        tiles.indices.forEach { i in
-            tiles[i].indices.forEach { j in
-                handler(i, j)
-            }
-        }
-    }
-    
-    private func traverseTilesColumnsRows(handler: (Int, Int) -> Void) {
-        for j in 0..<numberOfColumns {
-            for i in 0..<numberOfRows {
-                handler(i, j)
-            }
-        }
-    }
-    
+
     private func shiftAndMerge(direction: MovingDirection) {
         let inOrder = direction == .left || direction == .up
-        let movesAlongJ = direction == .left || direction == .right
-        let movesAlongI = !movesAlongJ
+        let movesAlongI = direction == .up || direction == .down
+        let movesAlongJ = !movesAlongI
         let comparisonMultiplier = inOrder ? 1 : -1
         let valueToCompareWith = (inOrder ? 0 : (movesAlongJ ? numberOfColumns : numberOfRows) - 1) * comparisonMultiplier
         
-        traverseTiles { inOrderI, inOrderJ in
+        tiles.traverse2D { inOrderI, inOrderJ in
             let i = inOrder ? inOrderI : numberOfRows - inOrderI - 1
             let j = inOrder ? inOrderJ : numberOfColumns - inOrderJ - 1
             guard let tile = tiles[i][j] else { return }
@@ -193,7 +183,7 @@ final class Game {
     }
     
     private func resetTiles() {
-        traverseTiles { i, j in
+        tiles.traverse2D { i, j in
             tiles[i][j]?.hasMerged = false
         }
     }
@@ -226,7 +216,7 @@ final class Game {
         guard emptyPositions.isEmpty else { return false }
         // Game is not over if there are some tiles to merge
         var gameOver = true
-        traverseTiles { i, j in
+        tiles.traverse2D { i, j in
             if hasEqualAdjacentTile(at: (i, j)) {
                 gameOver = false
             }
@@ -260,9 +250,8 @@ extension Game {
     }
 }
 
-
 extension Game {
-    private func printTiles() {
+    func printTiles() {
         for tileRow in tiles {
             var output = ""
             for tile in tileRow {
@@ -274,42 +263,3 @@ extension Game {
         print(String(repeating: "-", count: 16))
     }
 }
-//    lazy var testingTiles: [[TileModel?]] = {
-//        let tileNumbers = satisfyingTiles
-//        var tileModels: [[TileModel?]] = Array(repeating: Array(repeating: nil, count: numberOfColumns), count: numberOfRows)
-//        for i in tileNumbers.indices {
-//            for j in tileNumbers[i].indices {
-//                let tile = TileModel(power: tileNumbers[i][j], position: (i, j))
-//                tileModels[i][j] = tile
-//            }
-//        }
-//        return tileModels
-//    }()
-//    private lazy var allSameTiles = Array(repeating: Array(repeating: 1, count: numberOfColumns), count: numberOfRows)
-//
-//    private lazy var testCase = [
-//        [nil, nil, 1, nil],
-//        [nil, nil, 1, nil],
-//        [nil, nil, 3, nil],
-//        [nil, nil, nil, nil]
-//    ]
-//
-//    private let testTiles = [
-//        [nil, 1, 1, 2],
-//        [nil, 3, nil, nil],
-//        [nil, 3, nil, nil],
-//        [2, 3, nil, 2]
-//    ]
-//
-//    private lazy var oneTileBoard = [
-//        Array(repeating: nil, count: numberOfColumns),
-//        Array(repeating: nil, count: numberOfColumns),
-//        Array(repeating: nil, count: numberOfColumns),
-//        [nil, 2, nil, nil]
-//    ]
-//    private let satisfyingTiles = [
-//        [16,15,14,13],
-//        [9,10,11,12],
-//        [8,7,6,5],
-//        [2,2,3,4]
-//    ]

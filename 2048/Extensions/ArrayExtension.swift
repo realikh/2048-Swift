@@ -8,13 +8,12 @@
 import Foundation
 
 
-extension Collection where Self.Iterator.Element: RandomAccessCollection {
-    mutating func transpose() {
-        guard let firstRow = self.first else { return }
-        self = firstRow.indices.map { index in
-            self.map {
-                $0[index]
+extension Array where Element : Collection, Element.Index == Int {
+    func traverse2D(handler: (Int, Int) -> Void) {
+        for i in indices {
+            for j in self[i].indices {
+                handler(i, j)
             }
-        } as! Self
+        }
     }
 }
