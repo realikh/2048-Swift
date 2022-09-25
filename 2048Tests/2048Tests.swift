@@ -108,7 +108,7 @@ class _2048Tests: XCTestCase {
         XCTAssertTrue(tilesMatch(with: expectedTilePowers))
     }
     
-    private func tilesMatch(with expectedTilePowers: [[Int?]]) -> Bool {
+    func tilesMatch(with expectedTilePowers: [[Int?]]) -> Bool {
         var mismatchCount = 0
         
         for i in sut.tileNumbers.indices {
