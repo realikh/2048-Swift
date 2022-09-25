@@ -98,12 +98,12 @@ final class Game {
             stateDelegate?.scoreDidUpdate(score)
         }
         
-        if isOver {
-            stateDelegate?.gameIsOver()
-        }
-        
         if tilesHaveMovedOrMerged {
             placeRandomTile()
+        }
+        
+        if isOver {
+            stateDelegate?.gameIsOver()
         }
         
         resetTiles()

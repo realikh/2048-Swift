@@ -48,7 +48,6 @@ final class GameBoardView: UIView {
         let numberOfColumns = CGFloat(game.numberOfColumns)
         
         let estimatedTileSideByWidth = maxBoardWidth / ((1 + Constants.tileSpacingToTileSideRatio) * numberOfRows + Constants.tileSpacingToTileSideRatio)
-        
         let estimatedTileSideByHeight = maxBoardHeight / ((1 + Constants.tileSpacingToTileSideRatio) * numberOfColumns + Constants.tileSpacingToTileSideRatio)
         
         let estimatedTileSide = min(estimatedTileSideByWidth, estimatedTileSideByHeight)

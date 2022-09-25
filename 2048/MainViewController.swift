@@ -8,17 +8,14 @@
 import SnapKit
 import CoreGraphics
 
-internal extension Game {
-    func testMove(direction: MovingDirection) {
-        
-    }
-}
-
 final class MainViewController: UIViewController {
+    var randomNumber: Int {
+        return Int.random(in: 1...9)
+    }
+    
+    private lazy var game = Game(numberOfRows: randomNumber, numberOfColumns: randomNumber)
+    
     private lazy var scoresView = ScoresContainerView(dataSource: self)
-    
-    private var game = Game(numberOfRows: 3, numberOfColumns: 3)
-    
     private lazy var gameView = GameBoardView(game: game)
 
     override func viewDidLoad() {
@@ -106,7 +103,7 @@ extension MainViewController: GameStateDelegate {
             style: .default,
             handler: { _ in
                 self.gameView.removeFromSuperview()
-                self.game = Game(numberOfRows: 4, numberOfColumns: 4)
+                self.game = Game(numberOfRows: self.randomNumber, numberOfColumns: self.randomNumber)
                 self.gameView = GameBoardView(game: self.game)
                 self.game.start()
                 self.layoutUI()
