@@ -10,18 +10,16 @@ import UIKit
 
 final class GameBoardView: UIView {
     private let game: Game
-    private let boardWidth: CGFloat
-    private let tileSide: CGFloat
     
-    private var boardHeight: CGFloat {
-        let totalHeightOfTiles = tileSide * CGFloat(game.numberOfRows)
-        let totalHeightOfSpaces = tileSpacing * CGFloat(game.numberOfRows + 1)
-        let boardHeight = totalHeightOfTiles + totalHeightOfSpaces
-        return boardHeight
+    private var tileSide: CGFloat = 80
+    
+    private var tileSpacing: CGFloat {
+        return tileSide * Constants.tileSpacingToTileSideRatio
     }
     
-    private var tileSpacing: CGFloat
-    private let cornerRadius: CGFloat
+    private var cornerRadius: CGFloat {
+        return tileSide * Constants.tileCornerRadiusToTileSideRatio
+    }
     
     private var tileViews: [TileView] {
         return self.subviews.compactMap({ $0 as? TileView })
@@ -29,42 +27,45 @@ final class GameBoardView: UIView {
     
     init(
         game: Game,
-        boardWidth: CGFloat = UIScreen.main.bounds.width * 0.9,
-        tileSize: CGFloat = 80,
-        tileSpacing: CGFloat? = 6,
-        cornerRadius: CGFloat? = nil
+        maxBoardWidth: CGFloat = UIScreen.main.bounds.width * 0.95,
+        maxBoardHeight: CGFloat = UIScreen.main.bounds.width * 0.95
     ) {
         self.game = game
-        
-        let maximumTileSize = boardWidth / CGFloat(game.numberOfColumns)
-        
-        let tilesDontFit = maximumTileSize < tileSize
-        self.tileSide = tilesDontFit ? maximumTileSize : tileSize
-        
-        if let tileSpacing = tileSpacing {
-            let spacing = tilesDontFit ? 0 : tileSpacing
-            self.boardWidth = spacing * CGFloat(game.numberOfColumns + 1) + self.tileSide * CGFloat(game.numberOfColumns)
-            self.tileSpacing = spacing
-        } else {
-            self.tileSpacing = (boardWidth - CGFloat(game.numberOfColumns) * tileSide) / (CGFloat(game.numberOfRows + 1))
-            self.boardWidth = boardWidth
-        }
-        
-        if let tileSpacing = tileSpacing, tilesDontFit == false {
-            self.tileSpacing = tileSpacing
-        }
-        
-        self.cornerRadius = cornerRadius ?? self.tileSide * 0.2
         super.init(frame: .zero)
-
-        let frame = CGRect(x: 0, y: 0, width: self.boardWidth, height: boardHeight)
-        self.frame = frame
+        
+        frame = calculateFrame(maxBoardWidth: maxBoardWidth, maxBoardHeight: maxBoardHeight)
+        
         configureUI()
         layoutUI()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func calculateFrame(maxBoardWidth: CGFloat, maxBoardHeight: CGFloat) -> CGRect {
+        let numberOfRows = CGFloat(game.numberOfRows)
+        let numberOfColumns = CGFloat(game.numberOfColumns)
+        
+        let estimatedTileSideByWidth = maxBoardWidth / ((1 + Constants.tileSpacingToTileSideRatio) * numberOfRows + Constants.tileSpacingToTileSideRatio)
+        
+        let estimatedTileSideByHeight = maxBoardHeight / ((1 + Constants.tileSpacingToTileSideRatio) * numberOfColumns + Constants.tileSpacingToTileSideRatio)
+        
+        let estimatedTileSide = min(estimatedTileSideByWidth, estimatedTileSideByHeight)
+        
+        if estimatedTileSide > Constants.maxTileSide {
+            tileSide = Constants.maxTileSide
+        } else {
+            tileSide = estimatedTileSide
+        }
+        
+        let sumSpacingWidth = tileSpacing * (numberOfColumns + 1)
+        let sumSpacingHeight = tileSpacing * (numberOfRows + 1)
+        
+        let boardWidth = sumSpacingWidth + numberOfColumns * tileSide
+        let boardHeight = sumSpacingHeight + numberOfRows * tileSide
+        
+        return CGRect(x: 0, y: 0, width: boardWidth, height: boardHeight)
     }
     
     private func configureUI() {
@@ -231,6 +232,9 @@ extension GameBoardView: GameDelegate {
 
 extension GameBoardView {
     enum Constants {
+        static let tileCornerRadiusToTileSideRatio: CGFloat = 0.2
+        static let tileSpacingToTileSideRatio: CGFloat = 0.05
+        static let maxTileSide: CGFloat = 80
         static let animationDuration: Double = 0.2
         static let tileScale: CGFloat = 1.4
         static let tileAppearanceScale: CGFloat = 0.5

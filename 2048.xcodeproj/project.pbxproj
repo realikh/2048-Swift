@@ -31,6 +31,7 @@
 		77BB10A828DF1D0000FCC5DA /* GameDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BB10A728DF1D0000FCC5DA /* GameDelegate.swift */; };
 		77BB10AA28DF1D1500FCC5DA /* GameStateDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BB10A928DF1D1500FCC5DA /* GameStateDelegate.swift */; };
 		77BB10D328E0492F00FCC5DA /* 2048Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BB10D228E0492F00FCC5DA /* 2048Tests.swift */; };
+		77BB10D528E07CA900FCC5DA /* CGFloatExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BB10D428E07CA900FCC5DA /* CGFloatExtension.swift */; };
 		77FC3AFD28C53543004B6FF9 /* ArrayExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77FC3AFC28C53542004B6FF9 /* ArrayExtension.swift */; };
 		77FC3AFF28C54F44004B6FF9 /* TileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77FC3AFE28C54F44004B6FF9 /* TileView.swift */; };
 		9BE21FD2999B8866545383F5 /* Pods_2048.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F02159EAB8AF08107289C511 /* Pods_2048.framework */; };
@@ -74,6 +75,7 @@
 		77BB10A928DF1D1500FCC5DA /* GameStateDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameStateDelegate.swift; path = ../../../Documents/GameStateDelegate.swift; sourceTree = "<group>"; };
 		77BB10C928E048F800FCC5DA /* 2048Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = 2048Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		77BB10D228E0492F00FCC5DA /* 2048Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 2048Tests.swift; sourceTree = "<group>"; };
+		77BB10D428E07CA900FCC5DA /* CGFloatExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGFloatExtension.swift; sourceTree = "<group>"; };
 		77FC3AFC28C53542004B6FF9 /* ArrayExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayExtension.swift; sourceTree = "<group>"; };
 		77FC3AFE28C54F44004B6FF9 /* TileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileView.swift; sourceTree = "<group>"; };
 		7AD8B96BC86A4CF97C2A6896 /* Pods-2048.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-2048.debug.xcconfig"; path = "Target Support Files/Pods-2048/Pods-2048.debug.xcconfig"; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 			children = (
 				77700C4F28DF165600F9A980 /* UIKit */,
 				77FC3AFC28C53542004B6FF9 /* ArrayExtension.swift */,
+				77BB10D428E07CA900FCC5DA /* CGFloatExtension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -381,6 +384,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				773EF91228BE4F6F0037D960 /* MainViewController.swift in Sources */,
+				77BB10D528E07CA900FCC5DA /* CGFloatExtension.swift in Sources */,
 				773EF90E28BE4F6F0037D960 /* AppDelegate.swift in Sources */,
 				773EF92828BE709A0037D960 /* Game.swift in Sources */,
 				77FC3AFD28C53543004B6FF9 /* ArrayExtension.swift in Sources */,
