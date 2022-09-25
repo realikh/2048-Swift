@@ -233,7 +233,6 @@ extension GameBoardView: GameDelegate {
 extension GameBoardView {
     enum Constants {
         static let maxBoardSideLength: CGFloat = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) * 0.95
-        
         static let tileCornerRadiusToTileSideRatio: CGFloat = 0.2
         static let tileSpacingToTileSideRatio: CGFloat = 0.05
         static let maxTileSide: CGFloat = 80
